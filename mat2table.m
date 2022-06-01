@@ -1,5 +1,17 @@
-%% Mat to table
+% @title      Matlab format .mat to table
+% @file       mat2table.m
+% @author     Romain Beaubois
+% @date       06 Jul 2021
+% @copyright
+% SPDX-FileCopyrightText: © 2021 Romain Beaubois <refbeaubois@yahoo.com>
+% SPDX-License-Identifier: MIT
+%
+% @brief Analysis of recordings from binary files (MED64)
+% 
+% @details
+% > **06 Jul 2021** : file creation (RB)
 
+%% Mat to table
 sync = [load('/home/rbeaubois/Documents/ENSEIRB/Internship/Work/Matlab_function/mat/sync1.mat')...
     load('/home/rbeaubois/Documents/ENSEIRB/Internship/Work/Matlab_function/mat/sync2.mat')];
 

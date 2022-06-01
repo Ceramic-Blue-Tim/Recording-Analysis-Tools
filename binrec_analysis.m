@@ -1,15 +1,17 @@
 % @title      Analysis of recordings from binary files (MED64)
 % @file       binrec_analysis.m
-% @author     Romain Beaubois
+% @author     Tastuya Osaki, Romain Beaubois
 % @date       06 Jul 2021
 % @copyright
+% SPDX-FileCopyrightText: © 2020 Tatsuya Osaki <osaki@iis.u-tokyo.ac.jp>
 % SPDX-FileCopyrightText: © 2021 Romain Beaubois <refbeaubois@yahoo.com>
 % SPDX-License-Identifier: MIT
 %
 % @brief Analysis of recordings from binary files (MED64)
 % 
 % @details
-% > **06 Jul 2021** : file creation (RB)
+% > **19 Jun 2020** : file creation (TO)
+% > **06 Jul 2021** : add bin recordings parameters fetching from hdr file (RB)
 
 
 %% Clear

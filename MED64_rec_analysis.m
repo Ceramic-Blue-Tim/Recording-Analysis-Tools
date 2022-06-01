@@ -1,88 +1,104 @@
 % @title      Analysis of recordings from MED64
 % @file       MED64_rec_analysis.m
-% @author     Romain Beaubois
+% @author     Tastuya Osaki, Romain Beaubois
 % @date       06 Jul 2021
 % @copyright
+% SPDX-FileCopyrightText: © 2020 Tatsuya Osaki <osaki@iis.u-tokyo.ac.jp>
 % SPDX-FileCopyrightText: © 2021 Romain Beaubois <refbeaubois@yahoo.com>
 % SPDX-License-Identifier: MIT
 %
 % @brief Analysis of recordings from MED64
 % 
 % @details
-% > **06 Jul 2021** : file creation (RB)
+% > **19 Jun 2020** : file creation (TO)
+% > **06 Jul 2021** : add bin recordings parameters fetching from hdr file (RB)
 
-%% Clear
+%% Clear %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     clear all
     close all
     clc
 
-%% Path handling
+%% Path handling %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     addpath('functions')
 
-%% Get files
+%% Get files %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     f_type          = 'bin';
     f_get_type      = 'one';
     prev_path       = pwd();
     [fpath, nb_f]   = get_files(f_get_type, f_type);
 
-%% Analysis from binary files
-    trace_time      = 60;    % seconds
+%% Parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % <EDIT> >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  
+        % Trace paramaters
+            trace_time      = 60;   % trace duration (s)
+        
+        % Analysis parameters
+            compute_spike_detection     = true;     % Compute spike detection
+            compute_burst_detection     = true;     % Compute burst detection
+            compute_spike_sorting       = false;    % Compute spike sorting
+            compute_spike_clustering    = false;    % Compute spike clustering
+            compute_wavelet             = false;    % Compute wavelet related analysis
+            compute_brainw_wave         = false;    % Compute brainw wave analysis
+
+        % Saving parameters
+            save_data       = false;    % Save processed data to .mat format
+            save_fig        = false;    % Save figures
+    % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+    % Ask save path to user
     save_path       = uigetdir(pwd,'Select saving folder');
-%     cd(prev_path);
-    save_data       = false;
-    save_fig        = false;
-    compute         = true;
-   
+    % cd(prev_path);
+
+    % Build save parameters structure
     save_param      = struct( ...
         'path', save_path, ...
         'data', save_data, ...
         'fig',  save_fig ...
-    ); 
+    );
 
+    % Build computation parameters structure
+    compute_param   = struct( ...
+        'spike_detection',      compute_spike_detection,    ...
+        'burst_detection',      compute_burst_detection,    ...
+        'spike_sorting',        compute_spike_sorting,      ...
+        'spike_clustering',     compute_spike_clustering,   ...
+        'wavelet',              compute_wavelet,            ...
+        'brain_wave',           compute_brainw_wave         ...
+    );
+
+%% Analysis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Compute analysis for all files
     for i = 1:nb_f
-        trace_analysis(f_type, fpath(i), trace_time, save_param, compute);
-
-    % Read binary file
-        if strcmp(f_type, 'mat')
-            tmp                 = load(fpath);
-            Signal              = tmp.Signal;
-            fname_no_ext        = tmp.fname_no_ext;
-            rec_param           = tmp.rec_param; 
-            clear tmp;
-        elseif strcmp(f_type, 'bin')
-            [Signal, fname_no_ext, rec_param]           = read_bin(fpath, trace_time);   % Signals of electrodes + name of file + recording parameters
-        end
-
-        % Filter signal
-            [LP_Signal_fix, HP_Signal_fix, time_ms]     = filter_signal(rec_param.fs, rec_param.nb_chan, Signal);
-
+        % Analyze trace
+        trace_analysis(f_type, fpath(i), trace_time, compute_param, save_param);
     end
 
-%% 
-    figure
-    subplot(211)
-%     plot(Signal(:,1), Signal(:,3));
-    plot(time_ms, LP_Signal_fix(:,3));
-    title('42')
-    subplot(212)
-    plot(Signal(:,1), Signal(:,4));
-    title('21')
-%%
-    figure
-    plot(1e-3*Signal(:,1), Signal(:,4));
-    ylim([-5;5])
-    
-    figure
-    plot(1e-3*Signal([20*20e3:30*20e3],1), Signal([20*20e3:30*20e3],4));
-    ylim([-5;5])
+%% Plotting %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Example figure : Low pass filtered data 
+        % figure
+        % subplot(211)
+        % plot(time_ms, LP_Signal_fix(:,3));
+        % title('42')
+        % subplot(212)
+        % plot(Signal(:,1), Signal(:,4));
+        % title('21')
 
-%%
-    figure
-    for i = 1:64
-        subplot(8,8, i)
-        plot(1e-4*time_ms, LP_Signal_fix(:,i));
-        title(i)
-        ylim([-5;5])
-%         axis off
-%         set(gca,'XColor', 'none','YColor','none')
-    end
+    % Example figure : Low pass filtered data 
+        % figure
+        % plot(1e-3*Signal(:,1), Signal(:,4));
+        % ylim([-5;5])
+        
+        % figure
+        % plot(1e-3*Signal([20*20e3:30*20e3],1), Signal([20*20e3:30*20e3],4));
+        % ylim([-5;5])
+
+    % Example figure : Low pass filtered data 
+    %     figure
+    %     for i = 1:64
+    %         subplot(8,8, i)
+    %         plot(1e-4*time_ms, LP_Signal_fix(:,i));
+    %         title(i)
+    %         ylim([-5;5])
+    % %         axis off
+    % %         set(gca,'XColor', 'none','YColor','none')
+    %     end
