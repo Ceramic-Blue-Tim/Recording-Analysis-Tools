@@ -28,7 +28,7 @@
             f_get_type      = 'one';    % File analysis mode single 'one' or multiple 'all'
 
         % Trace paramaters
-            trace_time      = 60;   % trace duration (s)
+            trace_time      = -1;   % trace duration (s), -1 for full trace 
         
         % Analysis parameters
             compute_spike_detection     = true;     % Compute spike detection

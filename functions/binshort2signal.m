@@ -18,13 +18,19 @@ function [Signal]=binshort2signal(bin_filename, rec_param)
 % Open file
 fileID_bin              = fopen(bin_filename);
 
-% Get recording duration from file
-file_info               = dir(bin_filename);
-file_size               = file_info.bytes;
-nb_short_data           = file_size/2; % short (16 bits) is 2 bytes
-nb_samples              = nb_short_data/rec_param.nb_chan;
-rec_time_ms             = nb_samples * rec_param.fs * 1e3;
-rec_param.time_s        = nb_samples * rec_param.fs;
+if rec_param.time_s < 0
+    % Get recording duration from file
+        file_info               = dir(bin_filename);
+        file_size               = file_info.bytes;
+        nb_short_data           = file_size/2; % short (16 bits) is 2 bytes
+        nb_samples              = nb_short_data/rec_param.nb_chan;
+        rec_time_ms             = nb_samples / rec_param.fs * 1e3;
+        rec_param.time_s        = nb_samples / rec_param.fs;
+else
+    % User specified duration of file
+        nb_samples  = rec_param.time_s * rec_param.fs;
+        rec_time_ms = rec_param.time_s * 1e3;
+end
 
 % Read binary file
 A                       = fread(fileID_bin,[rec_param.nb_chan nb_samples], 'short', 'n');
