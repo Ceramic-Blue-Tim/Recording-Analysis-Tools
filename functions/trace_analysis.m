@@ -155,9 +155,9 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, save_pa
     fig1.NumberTitle     = 'off';
     set(fig1,'defaultAxesXColor','k');
 
-    [x, y]=plotSpikeRaster(A);
-    % plot(x, y, '.');  % X axis in seconds
-    plot(x/60, y, '.');    % Y axis in minutes
+    [raster_x, raster_y]=plotSpikeRaster(A);
+    % plot(raster_x, raster_y, '.');  % X axis in seconds
+    plot(raster_x/60, raster_y, '.');    % Y axis in minutes
 
 %% Saving %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Save figures
@@ -166,6 +166,8 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, save_pa
         savefig(fig1,fig_path);
         jpg_path = sprintf("%s%s%s.jpg", save_param.path, filesep, fname_no_ext);
         saveas(fig1,jpg_path);
+        svg_path = sprintf("%s%s%s.svg", save_param.path, filesep, fname_no_ext);
+        saveas(fig1,svg_path);
         close(fig1)
     end
 
@@ -199,6 +201,12 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, save_pa
                 'inter_burst_interval_CV' ...
             );
         end
+
+        raster_plot_save_path = sprintf("%s%s%s_raster_plot.mat", save_param.path, filesep, fname_no_ext);
+        save(raster_plot_save_path, ...
+            'raster_x', ...
+            'raster_y' ...
+        );
     end
     
 end
