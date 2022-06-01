@@ -1,6 +1,6 @@
 % @title      Convert binary file (short 16 bits) to matlab array
 % @file       binshort2signal.m
-% @author     Tastuya Osaki, Romain Beaubois
+% @author     Tatsuya Osaki, Romain Beaubois
 % @date       01 Jun 2022
 % @copyright
 % SPDX-FileCopyrightText: © 2020 Tatsuya Osaki <osaki@iis.u-tokyo.ac.jp>

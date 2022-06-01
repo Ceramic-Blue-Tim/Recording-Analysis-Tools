@@ -1,6 +1,6 @@
 % @title      Analysis of recordings from binary files (MED64)
 % @file       binrec_analysis.m
-% @author     Tastuya Osaki, Romain Beaubois
+% @author     Tatsuya Osaki, Romain Beaubois
 % @date       06 Jul 2021
 % @copyright
 % SPDX-FileCopyrightText: © 2020 Tatsuya Osaki <osaki@iis.u-tokyo.ac.jp>
