@@ -164,10 +164,8 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, save_pa
     if save_param.fig
         fig_path = sprintf("%s%s%s.fig", save_param.path, filesep, fname_no_ext);
         savefig(fig1,fig_path);
-        jpg_path = sprintf("%s%s%s.jpg", save_param.path, filesep, fname_no_ext);
+        png_path = sprintf("%s%s%s.png", save_param.path, filesep, fname_no_ext);
         saveas(fig1,jpg_path);
-        svg_path = sprintf("%s%s%s.svg", save_param.path, filesep, fname_no_ext);
-        saveas(fig1,svg_path);
         close(fig1)
     end
 
