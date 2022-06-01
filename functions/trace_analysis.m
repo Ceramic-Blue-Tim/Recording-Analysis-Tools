@@ -98,7 +98,7 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, save_pa
     end
 
     % Wavelet
-    if compute_param.compute_wavelet
+    if compute_param.wavelet
         % Wavelet transformation
             LP_target=LP_Signal_fix(:,1);
             % <EDIT> >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  
