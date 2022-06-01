@@ -69,7 +69,7 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, save_pa
     end
 
     % Analyze num for spike sorting
-    if compute_param.compute_spike_sorting        
+    if compute_param.spike_sorting        
         analyze_num = 500;
         [Pos_extracted_spikes, Neg_extracted_spikes]=spike_sorting(Fs, time_ms, num_electrode, All_spikes_pos, All_spikes_neg, HP_Signal_fix, analyze_num);
     end
