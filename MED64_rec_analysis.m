@@ -39,8 +39,8 @@
             compute_brainw_wave         = false;    % Compute brainw wave analysis
 
         % Saving parameters
-            save_data       = false;    % Save processed data to .mat format
-            save_fig        = false;    % Save figures
+            save_data       = true;    % Save processed data to .mat format
+            save_fig        = true;    % Save figures
     % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
     % Ask files to analyze to user

@@ -156,7 +156,8 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, save_pa
     set(fig1,'defaultAxesXColor','k');
 
     [x, y]=plotSpikeRaster(A);
-    plot(x, y, '.');
+    % plot(x, y, '.');  % X axis in seconds
+    plot(x/60, y, '.');    % Y axis in minutes
 
 %% Saving %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Save figures
