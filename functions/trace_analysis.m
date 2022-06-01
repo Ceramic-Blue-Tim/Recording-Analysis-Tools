@@ -162,9 +162,9 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, save_pa
 %% Saving %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Save figures
     if save_param.fig
-        fig_path = sprintf("%s%s%s.fig", save_param.path, filesep, fname_no_ext);
+        fig_path = sprintf("%s%s%s_raster_plot.fig", save_param.path, filesep, fname_no_ext);
         savefig(fig1,fig_path);
-        png_path = sprintf("%s%s%s.png", save_param.path, filesep, fname_no_ext);
+        png_path = sprintf("%s%s%s_raster_plot.png", save_param.path, filesep, fname_no_ext);
         saveas(fig1,jpg_path);
         close(fig1)
     end
