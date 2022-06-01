@@ -1,8 +1,15 @@
-%--------------------------------------------------------
-% Create raster plot from binary file
-%   > File has to be one trace
+% @title      Analysis of recordings from MED64
+% @file       MED64_rec_analysis.m
+% @author     Romain Beaubois
+% @date       06 Jul 2021
+% @copyright
+% SPDX-FileCopyrightText: © 2021 Romain Beaubois <refbeaubois@yahoo.com>
+% SPDX-License-Identifier: MIT
 %
-%--------------------------------------------------------
+% @brief Analysis of recordings from MED64
+% 
+% @details
+% > **06 Jul 2021** : file creation (RB)
 
 %% Clear
     clear all
@@ -60,3 +67,22 @@
     subplot(212)
     plot(Signal(:,1), Signal(:,4));
     title('21')
+%%
+    figure
+    plot(1e-3*Signal(:,1), Signal(:,4));
+    ylim([-5;5])
+    
+    figure
+    plot(1e-3*Signal([20*20e3:30*20e3],1), Signal([20*20e3:30*20e3],4));
+    ylim([-5;5])
+
+%%
+    figure
+    for i = 1:64
+        subplot(8,8, i)
+        plot(1e-4*time_ms, LP_Signal_fix(:,i));
+        title(i)
+        ylim([-5;5])
+%         axis off
+%         set(gca,'XColor', 'none','YColor','none')
+    end

@@ -11,15 +11,15 @@ dev_interburst_interval=zeros(num_electrode, 1);
 
 for i=1:num_electrode
     if visual_on==1
-     fig1 = figure;
-     fig1.PaperUnits      = 'centimeters';
-     fig1.Units           = 'centimeters';
-     fig1.Color           = 'w';
-     fig1.InvertHardcopy  = 'off';
-     fig1.Name            = ['#',num2str(i),' Burst detection overview'];
-     fig1.NumberTitle     = 'off';
-     fig1.DockControls    = 'on';
-     fig1.WindowStyle    = 'docked';
+     fig1                   = figure;
+     fig1.PaperUnits        = 'centimeters';
+     fig1.Units             = 'centimeters';
+     fig1.Color             = 'w';
+     fig1.InvertHardcopy    = 'off';
+     fig1.Name              = ['#',num2str(i),' Burst detection overview'];
+     fig1.NumberTitle       = 'off';
+     fig1.DockControls      = 'on';
+     fig1.WindowStyle       = 'docked';
      set(fig1,'defaultAxesXColor','k');
      figure(fig1);
      

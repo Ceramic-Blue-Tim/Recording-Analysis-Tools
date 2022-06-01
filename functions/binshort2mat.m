@@ -1,3 +1,18 @@
+% @title      Convert binary file (short format) to matlab format .mat
+% @file       binshort2mat.m
+% @author     Tastuya Osaki, Romain Beaubois
+% @date       06 Jul 2021
+% @copyright
+% SPDX-FileCopyrightText: © 2020 Tatsuya Osaki <osaki@iis.u-tokyo.ac.jp>
+% SPDX-FileCopyrightText: © 2021 Romain Beaubois <refbeaubois@yahoo.com>
+% SPDX-License-Identifier: MIT
+%
+% @brief Convert binary file (short format) to matlab format .mat
+% 
+% @details
+% > **19 Jun 2020** : file creation (TO)
+% > **06 Jul 2021** : add bin recordings parameters fetching from hdr file (RB)
+
 function [Signal, fname_no_ext, rec_param] = binshort2mat(bin_fpath, rec_duration_secs, save_param)
 
 % Get parameters from hdr files
