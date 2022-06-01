@@ -21,14 +21,12 @@
 %% Path handling %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     addpath('functions')
 
-%% Get files %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    f_type          = 'bin';
-    f_get_type      = 'one';
-    prev_path       = pwd();
-    [fpath, nb_f]   = get_files(f_get_type, f_type);
-
 %% Parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % <EDIT> >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  
+        % Recording file format
+            f_type          = 'bin';    % File format of trace
+            f_get_type      = 'one';    % File analysis mode single 'one' or multiple 'all'
+
         % Trace paramaters
             trace_time      = 60;   % trace duration (s)
         
@@ -45,9 +43,13 @@
             save_fig        = false;    % Save figures
     % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+    % Ask files to analyze to user
+    prev_path       = pwd();
+    [fpath, nb_f]   = get_files(f_get_type, f_type);
+
     % Ask save path to user
     save_path       = uigetdir(pwd,'Select saving folder');
-    % cd(prev_path);
+    cd(prev_path);
 
     % Build save parameters structure
     save_param      = struct( ...
