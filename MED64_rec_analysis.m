@@ -12,7 +12,7 @@
 % @details
 % > **19 Jun 2020** : file creation (TO)
 % > **06 Jul 2021** : add bin recordings parameters fetching from hdr file (RB)
-% > **02 Jun 2022** : clean script and update user parameters (RB)
+% > **02 Jun 2022** : clean script, update user parameters, add fetch of all binaries in a folder, automatic folder creation for saving (RB)
 
 %% Clear %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     clear all
@@ -26,7 +26,7 @@
     % <EDIT> >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  
         % Recording file format
             f_type          = 'bin';    % File format of trace
-            f_get_type      = 'one';    % File analysis mode single 'one' or multiple 'all'
+            f_get_type      = 'all';    % File analysis mode single 'one' or multiple 'all'
 
         % Trace paramaters
             trace_time      = -1;   % trace duration (s), -1 for full trace 
@@ -54,9 +54,13 @@
     prev_path       = pwd();
     [fpath, nb_f]   = get_files(f_get_type, f_type);
 
-    % Ask save path to user
-    save_path       = uigetdir(pwd,'Select saving folder');
-    cd(prev_path);
+    % Ask save path to user if only one file
+    if strcmp(f_get_type, 'one') 
+        save_path       = uigetdir(pwd,'Select saving folder');
+        cd(prev_path);
+    else
+        save_path = "";
+    end
 
     % Build computation parameters structure
     compute_param   = struct( ...
@@ -86,6 +90,12 @@
 %% Analysis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Compute analysis for all files
     for i = 1:nb_f
+        % Generate save path
+        if strcmp(f_get_type, 'all') 
+            save_param.path = fileparts(fileparts(fpath(i))) + filesep + "analysis" + filesep;
+            mkdir(save_param.path);
+        end
+
         % Analyze trace
         trace_analysis(f_type, fpath(i), trace_time, compute_param, plot_param, save_param);
     end
