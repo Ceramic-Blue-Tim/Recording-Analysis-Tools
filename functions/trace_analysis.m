@@ -142,7 +142,7 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
 
 %% Plotting %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Raster plot (events against time)
-    if plot_param.raster
+    if plot_param.raster && compute_param.spike_detection
         A=cell(rec_param.nb_chan, 1);
         for k=1:rec_param.nb_chan
             A{k}=rot90(All_spikes{k, 1});
