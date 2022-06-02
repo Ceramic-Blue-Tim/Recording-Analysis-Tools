@@ -15,14 +15,16 @@
 % > **19 Jun 2020** : file creation (TO)
 % > **06 Jul 2021** : add bin recordings parameters fetching from hdr file (RB)
 % > **01 Jun 2022** : add header, comments and update to last version from Tatsuya (RB)
+% > **02 Jun 2022** : add plotting parameters (RB)
 
-function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, save_param)
+function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_param, save_param)
 % | **Trace analysis (MED64)**
 % |
 % | **f_type** : file format for trace file 'mat' or 'bin'
 % | **fpath** : path to trace file
 % | **rec_duration_secs** : recording duration in seconds
 % | **compute_param** : computation to perform for analysis
+% | **plot_param** : plotting parameters for figures
 % | **save_param** : parameters for analysis saving
 %
 % Perform analysis of a trace : filter, spike detection, burst detection
@@ -140,33 +142,70 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, save_pa
 
 %% Plotting %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Raster plot (events against time)
-    A=cell(rec_param.nb_chan, 1);
-    for k=1:rec_param.nb_chan
-        A{k}=rot90(All_spikes{k, 1});
-    end
-    fig1 = figure;
-    fig1.PaperUnits      = 'centimeters';
-    fig1.Units           = 'centimeters';
-    fig1.Color           = 'w';
-    fig1.InvertHardcopy  = 'off';
-    fig1.Name            = ['Spike Rastor plot'];
-    fig1.DockControls    = 'on';
-    fig1.WindowStyle    = 'docked';
-    fig1.NumberTitle     = 'off';
-    set(fig1,'defaultAxesXColor','k');
+    if plot_param.raster
+        A=cell(rec_param.nb_chan, 1);
+        for k=1:rec_param.nb_chan
+            A{k}=rot90(All_spikes{k, 1});
+        end
+        fig_raster                    = figure;
+        fig_raster.PaperUnits         = 'centimeters';
+        fig_raster.Units              = 'centimeters';
+        fig_raster.Color              = 'w';
+        fig_raster.InvertHardcopy     = 'off';
+        fig_raster.Name               = ['Spike Rastor plot'];
+        fig_raster.DockControls       = 'on';
+        fig_raster.WindowStyle        = 'docked';
+        fig_raster.NumberTitle        = 'off';
+        set(fig_raster,'defaultAxesXColor','k');
 
-    [raster_x, raster_y]=plotSpikeRaster(A);
-    % plot(raster_x, raster_y, '.');  % X axis in seconds
-    plot(raster_x/60, raster_y, '.');    % Y axis in minutes
+        [raster_x, raster_y]=plotSpikeRaster(A);
+        % plot(raster_x, raster_y, '.');  % X axis in seconds
+        plot(raster_x/60, raster_y, '.');    % Y axis in minutes
+    end
+
+    % Plot activity of all electrodes
+    if plot_param.activity_all
+        fig_activity_all = figure;
+        fig_activity_all.PaperUnits         = 'centimeters';
+        fig_activity_all.Units              = 'centimeters';
+        fig_activity_all.Color              = 'w';
+        fig_activity_all.InvertHardcopy     = 'off';
+        fig_activity_all.Name               = ['Activity all channels'];
+        fig_activity_all.DockControls       = 'on';
+        fig_activity_all.WindowStyle        = 'docked';
+        fig_activity_all.NumberTitle        = 'off';
+        for i = 1:rec_param.nb_chan
+            subplot(round(sqrt(nb_chan)), ceil(sqrt(nb_chan)), i)
+            plot(1e-3*Signal(:,1), LP_Signal_fix(:,i));
+            title(i)
+            xlabel('Time (ms)');
+            ylabel('Amplitude (mV)');
+            if plot_param.activity_time_range(1) > -1
+                xlim([plot_param.activity_time_range])
+            end
+            % ylim([-5;5])
+    %         axis off
+    %         set(gca,'XColor', 'none','YColor','none')
+        end
+    end
 
 %% Saving %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Save figures
     if save_param.fig
-        fig_path = sprintf("%s%s%s_raster_plot.fig", save_param.path, filesep, fname_no_ext);
-        savefig(fig1,fig_path);
-        png_path = sprintf("%s%s%s_raster_plot.png", save_param.path, filesep, fname_no_ext);
-        saveas(fig1,jpg_path);
-        close(fig1)
+        if plot_param.raster
+            fig_path = sprintf("%s%s%s_raster_plot.fig", save_param.path, filesep, fname_no_ext);
+            savefig(fig_raster, fig_path);
+            png_path = sprintf("%s%s%s_raster_plot.png", save_param.path, filesep, fname_no_ext);
+            saveas(fig_raster, png_path);
+            close(fig_raster)
+        end
+        if plot_param.activity_all
+            fig_path = sprintf("%s%s%s_activity_all.fig", save_param.path, filesep, fname_no_ext);
+            savefig(fig_activity_all, fig_path);
+            png_path = sprintf("%s%s%s_activity_all.png", save_param.path, filesep, fname_no_ext);
+            saveas(fig_activity_all, png_path);
+            close(fig_activity_all)
+        end
     end
 
     % Save data
