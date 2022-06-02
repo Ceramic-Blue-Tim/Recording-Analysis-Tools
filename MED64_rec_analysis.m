@@ -43,7 +43,7 @@
             plot_raster                 = true;         % Plot raster
             plot_activity_all           = true;         % Plot activity of all electrodes
             plot_activity_one           = -1;           % Plot activity of one electrode (-1 : disabled)
-            plot_activity_time_range    = [0 ; 1e3];    % Activity time range plotted (s) ([-1;0] : all trace)
+            plot_activity_time_range    = [-1 ; 0];    % Activity time range plotted (s) ([-1;0] : all trace)
 
         % Saving parameters
             save_data       = false;    % Save processed data to .mat format
@@ -92,7 +92,7 @@
     for i = 1:nb_f
         % Generate save path
         if strcmp(f_get_type, 'all') 
-            save_param.path = fileparts(fileparts(fpath(i))) + filesep + "analysis" + filesep;
+            save_param.path = fileparts(fileparts(fpath(i))) + filesep + "analysis";
             mkdir(save_param.path);
         end
 

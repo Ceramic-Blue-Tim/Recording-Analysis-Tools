@@ -160,30 +160,30 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
 
         [raster_x, raster_y]=plotSpikeRaster(A);
         % plot(raster_x, raster_y, '.');  % X axis in seconds
-        plot(raster_x/60, raster_y, '.');    % Y axis in minutes
+        plot(raster_x/60, raster_y, '.');    % X axis in minutes
     end
 
     % Plot activity of all electrodes
     if plot_param.activity_all
         fig_activity_all = figure;
-        fig_activity_all.PaperUnits         = 'centimeters';
-        fig_activity_all.Units              = 'centimeters';
+        % fig_activity_all.PaperUnits         = 'centimeters';
+        % fig_activity_all.Units              = 'centimeters';
         fig_activity_all.Color              = 'w';
-        fig_activity_all.InvertHardcopy     = 'off';
+        % fig_activity_all.InvertHardcopy     = 'off';
         fig_activity_all.Name               = ['Activity all channels'];
-        fig_activity_all.DockControls       = 'on';
-        fig_activity_all.WindowStyle        = 'docked';
+        % fig_activity_all.DockControls       = 'on';
+        % fig_activity_all.WindowStyle        = 'docked';
         fig_activity_all.NumberTitle        = 'off';
         for i = 1:rec_param.nb_chan
-            subplot(round(sqrt(nb_chan)), ceil(sqrt(nb_chan)), i)
+            subplot(round(sqrt(rec_param.nb_chan)), ceil(sqrt(rec_param.nb_chan)), i)
             plot(1e-3*Signal(:,1), LP_Signal_fix(:,i));
             title(i)
             xlabel('Time (ms)');
             ylabel('Amplitude (mV)');
             if plot_param.activity_time_range(1) > -1
-                xlim([plot_param.activity_time_range])
+                xlim(plot_param.activity_time_range)
             end
-            % ylim([-5;5])
+            ylim([-2;2])
     %         axis off
     %         set(gca,'XColor', 'none','YColor','none')
         end
