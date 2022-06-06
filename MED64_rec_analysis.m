@@ -32,8 +32,8 @@
             trace_time      = -1;   % trace duration (s), -1 for full trace 
         
         % Analysis parameters
-            compute_spike_detection     = false;     % Compute spike detection
-            compute_burst_detection     = false;     % Compute burst detection
+            compute_spike_detection     = true;     % Compute spike detection
+            compute_burst_detection     = true;     % Compute burst detection
             compute_spike_sorting       = false;    % Compute spike sorting
             compute_spike_clustering    = false;    % Compute spike clustering
             compute_wavelet             = false;    % Compute wavelet related analysis
@@ -46,8 +46,8 @@
             plot_activity_time_range    = [-1 ; 0];    % Activity time range plotted (s) ([-1;0] : all trace)
 
         % Saving parameters
-            save_data       = false;    % Save processed data to .mat format
-            save_fig        = false;    % Save figures
+            save_data       = true;    % Save processed data to .mat format
+            save_fig        = true;    % Save figures
     % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
     % Ask files to analyze to user

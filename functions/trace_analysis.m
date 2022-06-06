@@ -200,8 +200,8 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
             close(fig_raster)
         end
         if plot_param.activity_all
-            fig_path = sprintf("%s%s%s_activity_all.fig", save_param.path, filesep, fname_no_ext);
-            savefig(fig_activity_all, fig_path);
+            % fig_path = sprintf("%s%s%s_activity_all.fig", save_param.path, filesep, fname_no_ext);
+            % savefig(fig_activity_all, fig_path);
             png_path = sprintf("%s%s%s_activity_all.png", save_param.path, filesep, fname_no_ext);
             saveas(fig_activity_all, png_path);
             close(fig_activity_all)
