@@ -165,7 +165,7 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
 
     % Plot activity of all electrodes
     if plot_param.activity_all
-        fig_activity_all = figure;
+        fig_activity_all = figure('visible', 'off');
         % fig_activity_all.PaperUnits         = 'centimeters';
         % fig_activity_all.Units              = 'centimeters';
         fig_activity_all.Color              = 'w';
