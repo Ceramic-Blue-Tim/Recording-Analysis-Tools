@@ -15,8 +15,6 @@ from main_window_ui import Ui_MainWindow
 
 NB_CHANNELS = 64
 FS          = 20000
-DURATION    = 60*1
-NB_SAMPLES  = FS*DURATION
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs
@@ -63,6 +61,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.box_filter_highcut.setMaximum(20000)
         self.box_filter_order.setMaximum(7)
 
+        self.box_filter_lowcut.setValue(300)
+        self.box_filter_highcut.setValue(5000)
+        self.box_filter_order.setValue(5)
+
         self.connectSignalsSlots()
         self.initTreeSelElec()
 
@@ -81,7 +83,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.dispRecName(fname_no_ext)
 
         nb_samples  = int(os.path.getsize(fpath_bin)/2)
-        self.t      = np.linspace(0, nb_samples/FS, int(nb_samples/NB_CHANNELS), endpoint=False)
+        self.t      = np.linspace(0, int(nb_samples/(NB_CHANNELS*FS)), int(nb_samples/NB_CHANNELS), endpoint=False)
         self.edata  = np.fromfile(fpath_bin, dtype=np.int16, count=nb_samples)
         self.edata  = np.reshape(self.edata, (int(nb_samples/NB_CHANNELS), NB_CHANNELS))
 
