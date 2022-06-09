@@ -149,7 +149,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.line_fname.setText(fname)
 
     def initTreeSelElec(self):
-        label = ["upper left", "upper right", "lower left", "lower right"]
+        label = ["\u25F0", "\u25F3", "\u25F1", "\u25F2"]
         self.tree_sel_elec.setHeaderLabel("Electrodes to display")
         for i in range(4):
             p = QTreeWidgetItem(self.tree_sel_elec)
