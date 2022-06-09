@@ -7,7 +7,6 @@ Signal_fix=zeros(tl, nm);
 HPt_Signal_fix=zeros(tl, nm);
 
 parfor i=2:nm
-    
     baseline= mean(Signal(:,i));
     Signal_fix(:, i) = Signal(:, i) -baseline;
     LP_Signal_fix(:, i)=lowpass(Signal_fix(:, i),1000, Fs);

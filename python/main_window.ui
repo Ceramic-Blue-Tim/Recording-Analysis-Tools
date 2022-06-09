@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>410</width>
+    <height>571</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout_6">
+    <item row="0" column="0" colspan="2">
+     <widget class="QGroupBox" name="groupBox_4">
+      <property name="title">
+       <string>File handling</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
+        <widget class="QLineEdit" name="line_fname"/>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="btn_load_rec">
+         <property name="text">
+          <string>Load recording</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QGroupBox" name="groupBox_5">
+      <property name="title">
+       <string>Plot</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="0" column="0">
+        <widget class="QPushButton" name="btn_plot_rec">
+         <property name="text">
+          <string>Plot electrodes</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>Trace time</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="en_tstart">
+         <property name="text">
+          <string>Start time(s)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QSpinBox" name="val_tstart"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="en_duration">
+         <property name="text">
+          <string>Duration (s)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QSpinBox" name="val_duration"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="1" colspan="2">
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="title">
+       <string>Axis limits</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="en_yMax">
+         <property name="text">
+          <string>yMax</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QDoubleSpinBox" name="val_yMax">
+         <property name="decimals">
+          <number>0</number>
+         </property>
+         <property name="minimum">
+          <double>-65536.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>65536.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="en_yMin">
+         <property name="text">
+          <string>yMin</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QDoubleSpinBox" name="val_yMin">
+         <property name="decimals">
+          <number>0</number>
+         </property>
+         <property name="minimum">
+          <double>-65536.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>65536.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="3">
+     <widget class="QGroupBox" name="groupBox_3">
+      <property name="title">
+       <string>Filtering</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0" colspan="2">
+        <widget class="QCheckBox" name="en_filter">
+         <property name="text">
+          <string>Filtering</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Low cut freq</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QSpinBox" name="box_filter_lowcut"/>
+       </item>
+       <item row="1" column="2">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>High cut freq</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QSpinBox" name="box_filter_highcut"/>
+       </item>
+       <item row="1" column="4">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Order</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="5">
+        <widget class="QSpinBox" name="box_filter_order"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="3" column="0" colspan="3">
+     <widget class="QTreeWidget" name="tree_sel_elec">
+      <column>
+       <property name="text">
+        <string notr="true">1</string>
+       </property>
+      </column>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>410</width>
+     <height>26</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

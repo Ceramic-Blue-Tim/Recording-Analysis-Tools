@@ -189,6 +189,21 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
         end
     end
 
+    % Plot only one electrode
+    if plot_param.activity_one > -1
+        fig_activity_one = figure;
+        fig_activity_one.Name               = ['Activity one channel'];
+        fig_activity_one.NumberTitle        = 'off';
+            % plot(1e-3*Signal(:,1), LP_Signal_fix(:,plot_param.activity_one));
+            plot(1e-3*Signal(:,1), Signal(:,plot_param.activity_one));
+            title(plot_param.activity_one)
+            xlabel('Time (ms)');
+            ylabel('Amplitude (mV)');
+            if plot_param.activity_time_range(1) > -1
+                xlim(plot_param.activity_time_range)
+            end
+    end
+
 %% Saving %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Save figures
     if save_param.fig
