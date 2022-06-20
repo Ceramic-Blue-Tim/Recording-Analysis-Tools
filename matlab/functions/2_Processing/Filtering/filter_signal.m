@@ -14,8 +14,8 @@
 % > **20 Jun 2022** : split time and signal to save memory (RB)
 
 function [LP_Signal_fix, HP_Signal_fix]=filter_signal(Fs, num_electrode, t, Signal)
-    Signal_fix      = zeros(length(t), num_electrode, 'int32');
-    HPt_Signal_fix  = zeros(length(t), num_electrode, 'int32');
+    Signal_fix      = zeros(length(t), num_electrode);
+    HPt_Signal_fix  = zeros(length(t), num_electrode);
 
     parfor i=1:num_electrode
         baseline                = mean(Signal(:,i));

@@ -34,7 +34,7 @@ function [t, signal]=binshort2signal(bin_filename, rec_param)
     end
 
     % Read binary file
-    A                       = fread(fileID_bin,[rec_param.nb_chan nb_samples], '*short', 'n');
+    A                       = fread(fileID_bin,[rec_param.nb_chan nb_samples], 'short=>short', 'n');
     time_temp               = [rec_time_ms : (-1e3/rec_param.fs) : 0];
     time                    = rot90(time_temp); clear time_temp;
     time(rec_time_ms+1, :)  = [];
@@ -42,7 +42,7 @@ function [t, signal]=binshort2signal(bin_filename, rec_param)
     % Rearrange data in the variable Signal
     trans_A                 = transpose(A); clear A;
     signal                  = trans_A*rec_param.conv_f; clear trans_A;
-    t                       = time; clear time;
+    t                       = time;
 
     % Close file
     fclose(fileID_bin);

@@ -180,7 +180,7 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
         fig_activity_all.NumberTitle        = 'off';
         for i = 1:rec_param.nb_chan
             subplot(round(sqrt(rec_param.nb_chan)), ceil(sqrt(rec_param.nb_chan)), i)
-            plot(1e-3*Signal(:,1), LP_Signal_fix(:,i));
+            plot(1e-3*t, LP_Signal_fix(:,i));
             title(i)
             xlabel('Time (ms)');
             ylabel('Amplitude (mV)');
@@ -199,7 +199,7 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
         fig_activity_one.Name               = ['Activity one channel'];
         fig_activity_one.NumberTitle        = 'off';
             % plot(1e-3*Signal(:,1), LP_Signal_fix(:,plot_param.activity_one));
-            plot(1e-3*Signal(:,1), Signal(:,plot_param.activity_one));
+            plot(1e-3*t, Signal(:,plot_param.activity_one));
             title(plot_param.activity_one)
             xlabel('Time (ms)');
             ylabel('Amplitude (mV)');
