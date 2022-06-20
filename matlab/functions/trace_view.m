@@ -38,7 +38,7 @@ function [t, raw_signal, lpf_signal, hpf_signal, rec_param] = trace_view(f_type,
     end
 
     % Filter signal
-    [LP_Signal_fix, HP_Signal_fix, time_ms]     = filter_signal(rec_param.fs, rec_param.nb_chan, t, Signal); clear t;
+    [LP_Signal_fix, HP_Signal_fix]              = filter_signal(rec_param.fs, rec_param.nb_chan, t, Signal);
 
 %% Plotting %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Plot activity of all electrodes

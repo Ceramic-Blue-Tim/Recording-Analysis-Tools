@@ -81,7 +81,7 @@
 
 %% Plotting %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Select time stamp file
-    [file_name, file_dir]   = uigetfile();   % Select file
+    [file_name, file_dir]   = uigetfile('*.csv','Select time stamp file');   % Select file
     fpath                   = sprintf("%s%s",file_dir,file_name);
     tstamp                  = tstamp2array(fpath);
     tstamp_sid              = tstamp * (rec_param.fs/1e3); % time stamp in sample id

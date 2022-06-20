@@ -13,11 +13,9 @@
 % > **19 Jun 2020** : file creation (TO)
 % > **20 Jun 2022** : split time and signal to save memory (RB)
 
-function [LP_Signal_fix, HP_Signal_fix, time_ms]=filter_signal(Fs, num_electrode, t, Signal)
-    time_ms = t;
-
-    Signal_fix      = zeros(length(time_ms), num_electrode);
-    HPt_Signal_fix  = zeros(length(time_ms), num_electrode);
+function [LP_Signal_fix, HP_Signal_fix]=filter_signal(Fs, num_electrode, t, Signal)
+    Signal_fix      = zeros(length(t), num_electrode, 'int32');
+    HPt_Signal_fix  = zeros(length(t), num_electrode, 'int32');
 
     parfor i=1:num_electrode
         baseline                = mean(Signal(:,i));

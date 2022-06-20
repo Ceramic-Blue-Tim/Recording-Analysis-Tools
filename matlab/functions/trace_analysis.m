@@ -47,7 +47,7 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
     end
 
     % Filter signal
-    [LP_Signal_fix, HP_Signal_fix, time_ms]     = filter_signal(rec_param.fs, rec_param.nb_chan, t, Signal); clear t;
+    [LP_Signal_fix, HP_Signal_fix]              = filter_signal(rec_param.fs, rec_param.nb_chan, t, Signal);
 
 %% Analysis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Spike detection
