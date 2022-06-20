@@ -7,3 +7,4 @@
 *.mat
 *.csv
 *.raw
+__pycache__/
