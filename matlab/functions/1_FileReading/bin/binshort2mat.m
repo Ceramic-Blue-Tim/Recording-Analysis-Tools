@@ -56,7 +56,7 @@ function [Signal, fname_no_ext, rec_param] = binshort2mat(bin_fpath, rec_duratio
 
     i = 1;
     while ~feof(fileID_bin)
-        A                       = fread(fileID_bin,[rec_param.nb_chan nb_samples],'short', 'n');
+        A                       = fread(fileID_bin,[rec_param.nb_chan nb_samples], '*short', 'n');
 
         % Rearrange data in the variable Signal
         trans_A                 = transpose(A); clear A;

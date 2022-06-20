@@ -16,6 +16,7 @@
 % > **06 Jul 2021** : add bin recordings parameters fetching from hdr file (RB)
 % > **01 Jun 2022** : add header, comments and update to last version from Tatsuya (RB)
 % > **02 Jun 2022** : add plotting parameters (RB)
+% > **20 Jun 2022** : split time and signal from bin reading to save memory (RB)
 
 function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_param, save_param)
 % | **Trace analysis (MED64)**
@@ -35,15 +36,18 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
     if strcmp(f_type, 'mat')
         tmp                 = load(fpath);
         Signal              = tmp.Signal;
+        % Compatibility patch now that from bin t and singal are splitted
+        t                   = Signal(:,1);
+        Signal              = Signal(:, 2:end);
         fname_no_ext        = tmp.fname_no_ext;
         rec_param           = tmp.rec_param; 
         clear tmp;
     elseif strcmp(f_type, 'bin')
-        [Signal, fname_no_ext, rec_param]           = read_bin(fpath, rec_duration_secs);   % Signals of electrodes + name of file + recording parameters
+        [t, Signal, fname_no_ext, rec_param]    = read_bin(fpath, rec_duration_secs);   % Signals of electrodes + name of file + recording parameters
     end
 
     % Filter signal
-    [LP_Signal_fix, HP_Signal_fix, time_ms]     = filter_signal(rec_param.fs, rec_param.nb_chan, Signal);
+    [LP_Signal_fix, HP_Signal_fix, time_ms]     = filter_signal(rec_param.fs, rec_param.nb_chan, t, Signal); clear t;
 
 %% Analysis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Spike detection

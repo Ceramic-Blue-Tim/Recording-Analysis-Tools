@@ -17,7 +17,7 @@
     clc
 
 %% Path handling %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    addpath('functions')
+    addpath(genpath('functions'))
 
 %% Parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % <EDIT> >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  
@@ -76,5 +76,41 @@
         end
 
         % Analyze trace
-        trace_view(f_type, fpath(i), trace_time, plot_param);
+        [t, raw_signal, lpf_signal, hpf_signal, rec_param] = trace_view(f_type, fpath(i), trace_time, plot_param);
     end
+
+%% Plotting %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Select time stamp file
+    [file_name, file_dir]   = uigetfile();   % Select file
+    fpath                   = sprintf("%s%s",file_dir,file_name);
+    tstamp                  = tstamp2array(fpath);
+    tstamp_sid              = tstamp * (rec_param.fs/1e3); % time stamp in sample id
+
+    % Create stim pattern
+    stim_state = zeros(length(t), 1);
+    stim_state(tstamp_sid)  = 1;
+
+    if length(stim_state) > length(t) % in case time stamp is longer than recording
+        stim_state = stim_state(1:length(t));
+    end
+
+    e = 36;
+    % Plot with stim as plot of one electrode
+    figure;
+    yyaxis left
+    plot(t, raw_signal(:,e));
+    hold on
+    yyaxis right
+    plot(t, stim_state);
+    
+    % Plot with stim as plot of one electrode
+    padded_tstamp   = [tstamp ; zeros(length(t)-length(tstamp),1)];
+    stim_state      = double((padded_tstamp>0));
+    figure;
+    yyaxis left
+    plot(t, raw_signal(:,e));
+    hold on
+    yyaxis right
+    scatter(padded_tstamp, stim_state, 5, 'filled');
+
+
