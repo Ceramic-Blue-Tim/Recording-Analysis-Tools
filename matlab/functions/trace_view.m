@@ -34,7 +34,7 @@ function [t, raw_signal, lpf_signal, hpf_signal, rec_param] = trace_view(f_type,
         rec_param           = tmp.rec_param; 
         clear tmp;
     elseif strcmp(f_type, 'bin')
-        [Signal, fname_no_ext, rec_param]       = read_bin(fpath, rec_duration_secs);   % Signals of electrodes + name of file + recording parameters
+        [t, Signal, fname_no_ext, rec_param]    = read_bin(fpath, rec_duration_secs);   % Signals of electrodes + name of file + recording parameters
     end
 
     % Filter signal

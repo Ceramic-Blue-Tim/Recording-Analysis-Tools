@@ -14,14 +14,12 @@
 % > **20 Jun 2022** : split time and signal to save memory (RB)
 
 function [LP_Signal_fix, HP_Signal_fix, time_ms]=filter_signal(Fs, num_electrode, t, Signal)
-    nm      = num_electrode+1;
     time_ms = t;
-    tl      = length(time_ms);
 
-    Signal_fix      = zeros(tl, nm);
-    HPt_Signal_fix  = zeros(tl, nm);
+    Signal_fix      = zeros(length(time_ms), num_electrode);
+    HPt_Signal_fix  = zeros(length(time_ms), num_electrode);
 
-    parfor i=1:nm
+    parfor i=1:num_electrode
         baseline                = mean(Signal(:,i));
         Signal_fix(:, i)        = Signal(:, i) -baseline;
         LP_Signal_fix(:, i)     = lowpass(Signal_fix(:, i),1000, Fs);
