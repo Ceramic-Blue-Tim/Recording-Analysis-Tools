@@ -34,7 +34,7 @@ function [t, signal]=binshort2signal(bin_filename, rec_param)
     end
 
     % Read binary file
-    A                       = fread(fileID_bin,[rec_param.nb_chan nb_samples], 'short=>short', 'n');
+    A                       = fread(fileID_bin,[rec_param.nb_chan nb_samples], 'short', 'n');
     time_temp               = [rec_time_ms : (-1e3/rec_param.fs) : 0];
     time                    = rot90(time_temp); clear time_temp;
     time(rec_time_ms+1, :)  = [];
