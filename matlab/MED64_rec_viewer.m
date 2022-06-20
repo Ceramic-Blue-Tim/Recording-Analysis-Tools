@@ -104,7 +104,7 @@
     plot(t, stim_state);
     
     % Plot with stim as plot of one electrode
-    padded_tstamp   = [tstamp ; zeros(length(t)-length(tstamp),1)];
+    padded_tstamp   = [tstamp/1e3 ; zeros(length(t)-length(tstamp),1)];
     stim_state      = double((padded_tstamp>0));
     figure;
     yyaxis left
