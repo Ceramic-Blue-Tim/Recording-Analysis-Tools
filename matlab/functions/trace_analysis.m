@@ -48,6 +48,7 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
 
     % Filter signal
     [LP_Signal_fix, HP_Signal_fix]              = filter_signal(rec_param.fs, rec_param.nb_chan, t, Signal);
+    time_ms = t;
 
 %% Analysis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Spike detection
@@ -146,25 +147,28 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
 
 %% Plotting %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Raster plot (events against time)
-    if plot_param.raster && compute_param.spike_detection
+    if compute_param.spike_detection
         A=cell(rec_param.nb_chan, 1);
         for k=1:rec_param.nb_chan
             A{k}=rot90(All_spikes{k, 1});
         end
-        fig_raster                    = figure;
-        fig_raster.PaperUnits         = 'centimeters';
-        fig_raster.Units              = 'centimeters';
-        fig_raster.Color              = 'w';
-        fig_raster.InvertHardcopy     = 'off';
-        fig_raster.Name               = ['Spike Rastor plot'];
-        fig_raster.DockControls       = 'on';
-        fig_raster.WindowStyle        = 'docked';
-        fig_raster.NumberTitle        = 'off';
-        set(fig_raster,'defaultAxesXColor','k');
-
         [raster_x, raster_y]=plotSpikeRaster(A);
-        % plot(raster_x, raster_y, '.');  % X axis in seconds
-        plot(raster_x/60, raster_y, '.');    % X axis in minutes
+
+        if plot_param.raster
+            fig_raster                    = figure;
+            fig_raster.PaperUnits         = 'centimeters';
+            fig_raster.Units              = 'centimeters';
+            fig_raster.Color              = 'w';
+            fig_raster.InvertHardcopy     = 'off';
+            fig_raster.Name               = ['Spike Rastor plot'];
+            fig_raster.DockControls       = 'on';
+            fig_raster.WindowStyle        = 'docked';
+            fig_raster.NumberTitle        = 'off';
+            set(fig_raster,'defaultAxesXColor','k');
+            
+            % plot(raster_x, raster_y, '.');  % X axis in seconds
+            plot(raster_x/60, raster_y, '.');    % X axis in minutes
+        end
     end
 
     % Plot activity of all electrodes
