@@ -113,4 +113,19 @@
     yyaxis right
     scatter(padded_tstamp, stim_state, 5, 'filled');
 
+    % Plot raster with area for stimulation
+    figure;
+    stim_width  = 50;   % [ms]
+    wavelength  = 470;  % [nm]
+    stim_color  = '#00a9ff'; % https://academo.org/demos/wavelength-to-colour-relationship/
+
+    fig_stim_width = stim_width*1e-3*rec_param.fs;
+    for i = 1:length(tstamp_sid)
+        if tstamp_sid(i)+fig_stim_width < length(t)
+            area([t(tstamp_sid(i)) t(tstamp_sid(i)+fig_stim_width)], [rec_param.nb_chan rec_param.nb_chan], 'FaceColor', stim_color, 'EdgeColor', stim_color)
+        end
+        hold on
+    end
+    scatter(raster_x, raster_y, 5, 'filled', 'r')
+
 
