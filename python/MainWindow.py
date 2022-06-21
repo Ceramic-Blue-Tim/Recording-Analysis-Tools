@@ -151,16 +151,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def initTreeSelElec(self):
         label = ["\u25F0", "\u25F3", "\u25F1", "\u25F2"]
         self.tree_sel_elec.setHeaderLabel("Electrodes to display")
+        offset = [0, 4, 32, 36]
         for i in range(4):
             p = QTreeWidgetItem(self.tree_sel_elec)
             p.setText(0, label[i])
             p.setFlags(p.flags() | Qt.ItemIsTristate | Qt.ItemIsUserCheckable)
             p.setCheckState(0, Qt.Unchecked)
-            for j in range(16):
-                child = QTreeWidgetItem(p)
-                child.setFlags(child.flags() | Qt.ItemIsUserCheckable)
-                child.setText(0, "{}".format(j+i*16+1))
-                child.setCheckState(0, Qt.Unchecked)
+            for z in range(4):
+                for j in range(4):
+                    child = QTreeWidgetItem(p)
+                    child.setFlags(child.flags() | Qt.ItemIsUserCheckable)
+                    child.setText(0, "{}".format(offset[i]+2*4*z+j+1)) # update
+                    child.setCheckState(0, Qt.Unchecked)
 
     def get_selected_leaves(self):
         checked_items = []
