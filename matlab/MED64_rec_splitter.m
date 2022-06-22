@@ -55,8 +55,10 @@
                 z = z + 1;
             end
         end
-        fpath(rmv_id) = [];
-        nb_f = nb_f - length(rmv_id);
+        if exist('rmv_id')
+            fpath(rmv_id) = [];
+            nb_f = nb_f - length(rmv_id);
+        end
     end
 
     % Build sequence parameters structure
