@@ -156,6 +156,9 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
 
         if plot_param.raster
             fig_raster                    = figure;
+        else
+            fig_raster                    = figure('visible', 'off');
+        end
             fig_raster.PaperUnits         = 'centimeters';
             fig_raster.Units              = 'centimeters';
             fig_raster.Color              = 'w';
@@ -168,7 +171,6 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
             
             % plot(raster_x, raster_y, '.');  % X axis in seconds
             plot(raster_x/60, raster_y, '.');    % X axis in minutes
-        end
     end
 
     % Plot activity of all electrodes
