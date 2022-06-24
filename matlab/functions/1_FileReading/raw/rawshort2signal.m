@@ -12,12 +12,12 @@
 % > **19 Jun 2020** : file creation (RB)
 % > **24 Jun 2022** : add all trace reading from file size (RB)
 
-function [t, signal]=rawshort2signal(fileID_raw, foffset, rec_param)
+function [t, signal]=rawshort2signal(fpath_raw, fileID_raw, foffset, rec_param)
 
     % Set measurement duration
     if rec_param.time_s < 0
         % Get recording duration from file
-            file_info               = dir(bin_filename);
+            file_info               = dir(fpath_raw);
             file_size               = file_info.bytes;
             nb_short_data           = file_size/2 - foffset; % short (16 bits) is 2 bytes
             nb_samples              = nb_short_data/rec_param.nb_chan;
@@ -30,10 +30,10 @@ function [t, signal]=rawshort2signal(fileID_raw, foffset, rec_param)
     end
 
     % Read binary file
-    A                       = fread(fileID_raw,[rec_param.nb_chan+1 nb_samples], 'short', 'n');
+    A                       = fread(fileID_raw,[rec_param.nb_chan nb_samples], 'short', 'n');
     time_temp               = [rec_time_ms : -1e3/rec_param.fs : 0];
     time                    = rot90(time_temp); clear time_temp;
-    time(rec_time_ms+1, :)  = [];
+    time(length(time))      = [];
 
     % Rearrange data in the variable Signal
     trans_A                 = transpose(A); clear A;

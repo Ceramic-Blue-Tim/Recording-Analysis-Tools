@@ -21,33 +21,34 @@ function [t, Signal, fname_no_ext, rec_param] = read_raw(raw_fpath, rec_duration
         raw_fid                     = fopen(raw_fpath, 'r', 'n', 'UTF-8');
 
         % Get recording parameters
+            NEW_LINE_BYTE_SIZE  = 2;
             foffs               = 0;
-            foffs               = foffs + length(fgetl(raw_fid)); % skip line
-            foffs               = foffs + length(fgetl(raw_fid)); % skip line
-            foffs               = foffs + length(fgetl(raw_fid)); % skip line
+            foffs               = foffs + length(fgetl(raw_fid)) + NEW_LINE_BYTE_SIZE; % skip line
+            foffs               = foffs + length(fgetl(raw_fid)) + NEW_LINE_BYTE_SIZE; % skip line
+            foffs               = foffs + length(fgetl(raw_fid)) + NEW_LINE_BYTE_SIZE; % skip line
 
             % Sampling frequency
             line                = fgetl(raw_fid);
-            foffs               = foffs + length(line);
+            foffs               = foffs + length(line) + NEW_LINE_BYTE_SIZE;
             sampling_freq       = sscanf(line, "Sample rate = %d");
 
             % ADC zero
             line                = fgetl(raw_fid);
-            foffs               = foffs + length(line);
+            foffs               = foffs + length(line) + NEW_LINE_BYTE_SIZE;
             zero_ADC            = sscanf(line, "ADC zero = %d");
 
             % Conversion factor
             line                = fgetl(raw_fid);
-            foffs               = foffs + length(line);
+            foffs               = foffs + length(line) + NEW_LINE_BYTE_SIZE;
             conv_factor         = sscanf(line, "El = %fµV/AD");
 
             % Active channels
             line                = fgetl(raw_fid);
-            foffs               = foffs + length(line);
+            foffs               = foffs + length(line) + NEW_LINE_BYTE_SIZE;
             tmp_active_chans    = string(line);
             active_channels     = split(sscanf(tmp_active_chans, "Streams = %s"),';');
             
-            foffs               = foffs + length(fgetl(raw_fid)); % skip line
+            foffs               = foffs + length(fgetl(raw_fid)) + NEW_LINE_BYTE_SIZE; % skip line
     
         % Create structure with recordinf parameters
         rec_param = struct(... 
@@ -62,6 +63,6 @@ function [t, Signal, fname_no_ext, rec_param] = read_raw(raw_fpath, rec_duration
         clear file_format session_start sampling_freq conv_factor active_channels
 
         fprintf(sprintf("[Loading] : %s\n", fname_no_ext));   % Display file selected
-        [t, Signal] = rawshort2signal(raw_fid, foffs, rec_param);
+        [t, Signal] = rawshort2signal(raw_fpath, raw_fid, foffs, rec_param);
         fclose(raw_fid);
     end
