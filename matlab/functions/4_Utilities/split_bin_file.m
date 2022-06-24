@@ -59,14 +59,14 @@ function split_bin_file(bin_fpath, sequence)
         end
         
         % Read data from file
-        rdata               = fread(fileID_bin,[rec_param.nb_chan nb_samples_to_read], 'short', 'n');
-        
+        rdata               = fread(fileID_bin, rec_param.nb_chan*nb_samples_to_read, 'short=>short', 'n');
+
         % Open output file
         fpath_splitbin      = sprintf("%s%s%s_%s.bin", bin_dir, filesep, fname_no_ext, sequence.label(i));
         fileID_splitbin     = fopen(fpath_splitbin, 'w');
 
         % Write data in file
-        fwrite(fileID_splitbin, rdata);
+        fwrite(fileID_splitbin, rdata, 'short');
         fprintf(sprintf("[Saved] : Sequence %s to file %s_%s\n", sequence.label(i), fname_no_ext, sequence.label(i)));   % Display file selected
 
         % Duplicate hdr file

@@ -30,7 +30,7 @@
 
         % Splitting sequence
             sequence_labels     = ["stim_off1", "stim_on1", "stim_off2", "stim_on2", "stim_off3"];
-            sequence_duration   = [10, 10, 10, 10, 10];      % [s]
+            sequence_duration   = [5*60, 5*60, 5*60, 5*60, 5*60];      % [s]
     % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
     % Ask files to analyze to user
