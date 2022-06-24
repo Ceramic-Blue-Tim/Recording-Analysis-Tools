@@ -44,6 +44,8 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
         clear tmp;
     elseif strcmp(f_type, 'bin')
         [t, Signal, fname_no_ext, rec_param]    = read_bin(fpath, rec_duration_secs);   % Signals of electrodes + name of file + recording parameters
+    elseif strcmp(f_type, 'raw')
+        [t, Signal, fname_no_ext, rec_param]    = read_raw(fpath, rec_duration_secs);   % Signals of electrodes + name of file + recording parameters
     end
 
     % Filter signal

@@ -10,7 +10,7 @@
 % 
 % @details
 % > **06 Jul 2021** : file creation (RB)
-% > **20 Jun 2022** : file creation (RB)
+% > **20 Jun 2022** : update file reading (RB)
 
 function [t, Signal, fname_no_ext, rec_param] = read_bin(bin_fpath, rec_duration_secs)
 
