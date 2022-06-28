@@ -1,0 +1,765 @@
+function [execMessage, success] = create_datmatNCards_ns(idCh, output, startFolder,...
+    fileName, expNames, outFolders, performFiltering, cutOffFrequencies, rawDataConversionFlag, ...
+    datConversionFlag, matConversionFlag, anaConversionFlag, setOffsetToZeroFlag, ...
+    filtConversionFlag, nMeas)
+
+% The function converts a single MCD file recorded from every MCS device
+% by using the NeuroShare library.
+% The code is generalized in order to manage even data from more than 2
+% meas.
+%
+% INPUT:
+%    idCh = array containing indexes of channels to be converted; each
+%        row contains the data to be converted for the correspondent
+%        MEA
+%    datConversionFlag - enables conversion to DAT format - DISMISSED
+%    matConversionFlag - enables conversion to MAT format - DISMISSED
+%    anaConversionFlag - enables conversion of the Analog streams (if
+%    present)
+%    filtConversionFlag - enables conversion of a filtered stream (if
+%    present)
+%    output (string) - determines either if output data has to be in quantization level or in uVolt
+%    startFolder - folder containing the MCD file that must be
+%            converted
+%    outFolders -  cell array whose rows contain the paths to the folders
+%            in which MAT (and DAT) folders (containing in turn
+%            the folders of each phase with .mat and .dat folders)
+%            will be created
+%    expNames  -  cell array whose rows contain the experiment names to be
+%                 used for the conversion
+%    fileName - full pathname of the file to be converted without extension (containing the full path to the file)
+%    nMeas  - number of meas' data the mcd file to be converted
+%            contains. This parameter serves for multiple
+%            amplifiers setup
+%    setOffsetToZeroFlag - flag for setting the offset to zero
+%    fs -  sampling frequency of the experiment
+
+%   created by Luca Leonardo Bologna (March 2011) in order to convert
+%   through the new multichannel libraries (NeuroShare)
+
+%--------------------------------------------------------------------------
+
+% ----------------------------------------------------------------------
+% --------------------- Global parameters ------------------------------
+% ----------------------------------------------------------------------
+
+% display message on file converted
+disp(['Converting File ' fileName]);
+
+% file content to output folder name mapping
+fldScMap = {'elec', 'anlg', 'filt', 'chtl','digi', 'spks', 'trig'}';
+fldMCDMap = {'_Mat_files', '_Ana_files','_Filt_files', '_Chtl_files', '_Digi_files', '_Spks_files', '_Trig_files'}';
+
+% all .mcd data type to be compulsorily converted
+mcdDttp = {'chtl', 'digi', 'spks', 'trig'}';
+
+% digital bits assigned to MeaA and MeaB
+% meaA_bit = {'00'};
+% meaB_bit = {'01'};
+
+% analysis the user chose to do
+anChsn = {};
+
+% Volt to microVolt conversion factor
+V_to_uV = 1000000;
+
+% if raw data must be converted
+if rawDataConversionFlag
+    anChsn = [anChsn; 'elec'];
+end
+
+% if analog signals must be converted
+if anaConversionFlag
+    anChsn = [anChsn; 'anlg'];
+end
+
+% if filtered data must be converted
+if filtConversionFlag
+    anChsn = [anChsn; 'filt'];
+end
+
+% conversion to be performed based on user's choice and recorded data
+usChtmp = [anChsn; mcdDttp];
+idxem = cellfun(@isempty, usChtmp);
+usCh = usChtmp(~idxem);
+
+% further implementation for letting the user choose the channel to be
+% converted
+% % % % label_ch=  [     0 12 13 14 15 16 17 0  ...
+% % % %                 21 22 23 24 25 26 27 28 ...
+% % % %                 31 32 33 34 35 36 37 38 ...
+% % % %                 41 42 43 44 45 46 47 48 ...
+% % % %                 51 52 53 54 55 56 57 58 ...
+% % % %                 61 62 63 64 65 66 67 68 ...
+% % % %                 71 72 73 74 75 76 77 78 ...
+% % % %                  0 82 83 84 85 86 87 0 ];
+
+% ----------------------------------------------------------------------
+% retrieving all infos
+% ----------------------------------------------------------------------
+
+% open .mcd file
+[nsresult, hfile] = ns_OpenFile(fileName);
+
+% get .mcd file's info
+[nsresult, FileInfo] = ns_GetFileInfo(hfile);
+
+% check whether data are continuous or triggered
+[sysUsed remainder] = strtok(FileInfo.FileType);
+recType = strtok(remainder);
+
+% flag indicating if data are triggered
+triggedData = ismember('trig', {recType});
+
+% get exp duration expressed in number of samples
+TimeSpanSamples = ConvertTimeStamps(FileInfo.TimeSpan, FileInfo.TimeStampResolution);
+
+% get info on all the Entities contained in the file
+[nsresult, intlEntityInfo] = ns_GetEntityInfo(hfile, 1 : FileInfo.EntityCount);
+
+% % % % % % % % % % % % % % % % % % % % % %
+% SEPARATE DIGITAL BITS FOR MEA_A AND MEA_B
+% % % % % % % % % % % % % % % % % % % % % %
+
+% find indices of different digital stream
+% [idxDigiMeaA] = getIdxDigi(intlEntityInfo, meaA_bit);
+% [idxDigiMeaB] = getIdxDigi(intlEntityInfo, meaB_bit);
+%
+% if ~isempty(idxDigiMeaA)
+%     intlEntityInfo(idxDigiMeaA).EntityLabel(8) = '1';
+% end
+%
+% if ~isempty(idxDigiMeaB)
+%     intlEntityInfo(idxDigiMeaB).EntityLabel(8) = '2';
+% end
+% % % % % % % % % % % % % % % % % % % % % %
+
+% % % % % % % % % % % % % % % % % % % % % % %
+% SEPARATE Electrode Name FOR MEA_A AND MEA_B
+% % % % % % % % % % % % % % % % % % % % % % %
+
+% if data from 2 amplifier were recorded change the index (done for
+% compatibility with the old 120 channel where also channels from amplifier
+% B are named as elec0001)
+if nMeas == 2
+    % find indices of different digital stream
+    [idxElecMeaA] = getIdxElectrodes(intlEntityInfo, 'A');
+    [idxElecMeaB] = getIdxElectrodes(intlEntityInfo, 'B');
+    
+    if ~isempty(idxElecMeaA)
+        for i = 1: length(idxElecMeaA)
+            intlEntityInfo(idxElecMeaA(i)).EntityLabel(8) = '1';
+        end
+    end
+    
+    if ~isempty(idxElecMeaB)
+        for i = 1: length(idxElecMeaB)
+            intlEntityInfo(idxElecMeaB(i)).EntityLabel(8) = '2';
+        end
+    end
+    
+    % if data from a single amplifier were recorded
+else
+    for i = 1 : length(intlEntityInfo)
+        intlEntityInfo(i).EntityLabel(8) = '1';
+    end
+end
+% % % % % % % % % % % % % % % % % % % % % %
+
+% % % % % % % % % % % % % % % % % % % % % %
+% Checking phase - TO BE COMPLETED
+% % % % % % % % % % % % % % % % % % % % % %
+
+
+% % % % % % % % % % % % % % % % % % % % % % %
+% % % % % % % % Manipulate labels and indices
+% % % % % % % % % % % % % % % % % % % % % % %
+
+% get all entity full name identifiers (first 8 characters of the labels)
+crrFlCrrLbls = {intlEntityInfo.EntityLabel};
+allFullId = cellfun(@(x) x(1:8),crrFlCrrLbls, 'UniformOutput', 0);
+
+% get all entity short name identifiers
+allSnId = cellfun(@(y) y(1:4), allFullId, 'UniformOutput', 0);
+
+% get all entity numeric identifiers
+% allNumId = cellfun(@(y) y(5:8), allFullId, 'UniformOutput', 0);
+
+% final indices of data to be taken
+idxFnl2tk = ismember(allSnId, usCh);
+
+% final data to convert
+EntityInfo = intlEntityInfo(idxFnl2tk);
+
+% final unique full indices of entities to convert
+[fnlUnFllId] = unique(allFullId(idxFnl2tk), 'last');
+
+% final unique short name identifiers of entities to convert
+fnlSnId = cellfun(@(y) y(1:4), fnlUnFllId, 'UniformOutput', 0);
+
+% final unique numeric identifiers of entities to convert
+fnlNumId = cellfun(@(y) y(5:8), fnlUnFllId, 'UniformOutput', 0);
+
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % %
+% % % % % % % % % % % % % % CREATE ALL FINAL FOLDERS
+% % % % % % % % % % % % % % % % % % % % % % % % % % %
+
+% initialise cell array for all folders to be built
+crtdFld = cell(length(fnlUnFllId), 1);
+
+% for every different stream (i.e. type of data)
+for i = 1 : length(fnlUnFllId)
+    
+    % extract numerical identifier of current stream
+    amplIdx = str2double(fnlNumId{i});
+    
+    % extract short name identifier of current stream
+    dataId = fnlSnId{i};
+    
+    % extract current indices for mapping name
+    [isMbrFlg idxCrrData] = ismember(dataId, fldScMap);
+    
+    % switch different stream type
+    switch dataId
+        % all analog and digital signals are saved in both sub-experiments folders (in
+        % case data from two amplifiers are acquired)
+        case {'anlg', 'digi'}
+            
+            % initialise cell array
+            currDoubleFold = cell(1, nMeas);
+            for j = 1 : nMeas
+                % current experiment folder
+                currExpName = strtrim(char(expNames{1}(j,:)));
+                
+                % find experiment number
+                expNum = find_expnum(currExpName,'_');
+                
+                % name of the folder to be built
+                actFldTbld = fullfile(strtrim(char(outFolders{1}(j,:))),[expNum fldMCDMap{idxCrrData}], strtrim(char(expNames{1}(j,:))));
+                
+                % convert to cell
+                currDoubleFold(j) = {actFldTbld};
+                
+                % make folder if it does not exist
+                if ~isdir(currDoubleFold{j})
+                    mkdir(currDoubleFold{j});
+                end
+            end
+            
+            % update list with all the folders built for saving data
+            crtdFld{i} = currDoubleFold;
+            
+            % if data are neither "anlg" nor "digi" build separate folders fot
+            % the two amplifiers if two were used
+        otherwise
+            % current experiment name
+            currExpName = strtrim(char(expNames{1}(amplIdx,:)));
+            
+            % find experiment number
+            expNum = find_expnum(currExpName,'_');
+            
+            % build current folder name
+            currFold = fullfile(strtrim(char(outFolders{1}(amplIdx,:))), [expNum fldMCDMap{idxCrrData}], strtrim(char(expNames{1}(amplIdx,:))));
+            
+            % make folder if it does not exist
+            if ~isdir(currFold)
+                mkdir(currFold);
+            end
+            
+            % update list with all the folders built for saving data
+            crtdFld{i} = {currFold};
+    end
+end
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+% % Following code was adapted from sigTOOL code for data import
+% % Author: Malcolm Lidierth 10/06
+% % Copyright - The Author & King's College London 2006-2007
+% %
+% % Modified by Luca Leonardo Bologna - March 2011
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+
+% for every Entity in the .mcd file
+for chan = 1 : length(EntityInfo)
+    
+    % initialise array for containing current stream data
+    crrData2Save = zeros(TimeSpanSamples, 1);
+    
+    % continue if current entity does not contain data
+    if EntityInfo(chan).ItemCount==0
+        continue
+    end
+    
+    % bar indicating proceeding conversion
+    waitbarImproved(chan/(length(EntityInfo)), ['converting stream ' num2str(chan) ' of '   num2str(length(EntityInfo))]);
+    
+    % switch between different entity type
+    switch EntityInfo(chan).EntityType
+        case 1
+            %--------------------------------------------------------------
+            % Event channel
+            %--------------------------------------------------------------
+            
+            % extract Event stream info
+            [nsresult, EventInfo] = ns_GetEventInfo(hfile,chan);
+            
+            % continue if problems in opening
+            if nsresult < 0
+                continue
+            end
+            
+            % extract all data for current Entity
+            [nsresult, timestamps, data, datasize] =...
+                ns_GetEventData(hfile, chan, 1 : EntityInfo(chan).ItemCount); %#ok<NASGU>
+            
+            % if error in opening or no event is present continue
+            if nsresult < 0 || isempty(timestamps)
+                continue
+            end
+            
+            % convert timestamps into sample number
+            timestampssamples = ConvertTimeStamps(timestamps, FileInfo.TimeStampResolution) + 1;
+            
+            % switch between different data type
+            switch EntityInfo(chan).EntityLabel(1:4)
+                
+                % in case current stream is digital
+                case 'digi'
+                    % if the number of timesamples is odd delete the last
+                    if ~rem(length(timestampssamples), 2)
+                        timestampssamples = timestampssamples(1 : end -1);
+                    end
+                    
+                    % for every couple of samples update data array to save
+                    for w = 1 : 2 : length(timestampssamples) - 1
+                        crrData2Save(timestampssamples(w) : timestampssamples(w + 1)) = 1;
+                    end
+                    
+                    % in case current stream is the trigger
+                case 'trig'
+                    % fill final data with trigger positions
+                    crrData2Save(timestampssamples) = 1;
+            end
+            
+            % extract channel's label
+            ch = extractChannel(EntityInfo(chan).EntityLabel, EntityInfo(chan).EntityLabel(1:4));
+            
+            % save data
+            writeDataToFile(crrData2Save, expNames, fnlUnFllId, crtdFld, EntityInfo(chan).EntityLabel(1:8), ch);
+            
+        case 2
+            %--------------------------------------------------------------
+            % Continuous Waveform Channel - Analog Entity
+            %--------------------------------------------------------------
+            
+            % if data are triggered take only Segment Entity - do not save
+            % 'digi' stream
+            if triggedData || ismember(EntityInfo(chan).EntityLabel(1:4), {'digi'})
+                continue
+            end
+            
+            % extract information on analog channel
+            [nsresult, AnalogInfo] = ns_GetAnalogInfo(hfile,chan);
+            
+            % continue if error in opening
+            if nsresult < 0
+                continue
+            end
+            
+            % set size of data blocks to be used for conversion
+            blocksize = 1e7; % 1e6 original
+            
+            % extract number of blocks
+            nblocks = floor(EntityInfo(chan).ItemCount/blocksize);
+            
+            % extract remainder
+            tail = rem(EntityInfo(chan).ItemCount, blocksize);
+            
+            % read the data for every block
+            for k = 1 : nblocks
+                [nsresult, ContCount, data] = ns_GetAnalogData(hfile, chan,...
+                    (k-1)*blocksize + 1, blocksize);
+                
+                % update data to be saved with current block
+                crrData2Save((k-1)*blocksize + 1 : (k-1) * blocksize + ContCount) = data;
+            end
+            
+            % read data remainder with respect to block size
+            if tail > 0
+                [nsresult, ContCount, data] = ns_GetAnalogData(hfile, chan,...
+                    max(0,(nblocks-1)) * blocksize+1, tail);
+                crrData2Save((nblocks)*blocksize + 1 : (nblocks) * blocksize + tail) = ...
+                    data;
+            end
+            
+            % normalise if requested
+            if setOffsetToZeroFlag && ismember(EntityInfo(chan).EntityLabel(1:4), {'elec', 'filt'})
+                crrData2Save = crrData2Save - mean(crrData2Save);
+            end
+            
+            % check for filtering flag
+            if ismember(EntityInfo(chan).EntityLabel(1:4), {'elec'})
+                crrAmplIdx = str2num(EntityInfo(chan).EntityLabel(5:8));
+                crrData2Save = filtDataUser(crrData2Save, performFiltering{1}(crrAmplIdx), cutOffFrequencies{1}(crrAmplIdx), AnalogInfo.SampleRate);
+            end
+            
+            % conversion to microVolt
+            crrData2Save = crrData2Save * V_to_uV;
+            
+            % convert to mV if analog data
+            if ismember(EntityInfo(chan).EntityLabel(1:4), {'anlg'})
+                crrData2Save = crrData2Save/1000;
+            end
+            
+            % conversion to int16
+            % crrData2Save = int16(crrData2Save);
+            
+            % extract channel name
+            ch = extractChannel(EntityInfo(chan).EntityLabel, EntityInfo(chan).EntityLabel(1:4));
+            
+            % write data to file
+            writeDataToFile(crrData2Save, expNames, fnlUnFllId, crtdFld, EntityInfo(chan).EntityLabel(1:8), ch);
+            
+        case 3
+            %--------------------------------------------------------------
+            % Segment Data
+            %--------------------------------------------------------------
+            if ismember(EntityInfo(chan).EntityLabel(1:4), {'digi'})
+                continue
+            end
+            
+            % get segment info
+            [nsresult, SegmentInfo] = ns_GetSegmentInfo(hfile, chan);
+            
+            % variable for saving data
+            crrData2Save = zeros(1, TimeSpanSamples);
+            
+            % segment source info
+            [nsresult, SegmentSourceInfo] = ns_GetSegmentSourceInfo(hfile, chan, 1);
+            
+            % read all items
+            [nsresult, timestamps, temp, samplecount, UnitID] = ...
+                ns_GetSegmentData(hfile, chan, 1 : EntityInfo(chan).ItemCount);
+            
+            % linearize all data extracted (done to handle different segment sample number)
+            tempLin = temp(:);
+            
+            % convert timestamps in number of samples
+            timestampsSmpl = ConvertTimeStamps(timestamps, FileInfo.TimeStampResolution) + 1;
+            
+            % switch between different entities
+            switch EntityInfo(chan).EntityLabel(1:4)
+                % in case of spikes data save only timestamps
+                case 'spks'
+                    crrLastIdx = find(timestampsSmpl <= length(crrData2Save), 1, 'last');
+                    crrData2Save(timestampsSmpl(1 : crrLastIdx)) = 1;
+                    
+                    % in case of analog data save the entire chunk
+                case {'elec', 'anlg', 'filt', 'chtl'}
+                    % initial index for retrieving data
+                    strIdx = 1;
+                    
+                    % for every segment
+                    for k = 1 : size(samplecount)
+                        
+                        % extract current segment from starting index and number or samples
+                        crrData = tempLin(strIdx : strIdx + samplecount(k) -1);
+                        
+                        % update starting index for next segment
+                        strIdx = strIdx + samplecount(k);
+                        
+                        % starting time of current segment
+                        crrTimeSmpl = timestampsSmpl(k);
+                        
+                        % last index to be used for saving data
+                        crrLastIdx =  min( crrTimeSmpl + length(crrData) - 1, length(crrData2Save));
+                        
+                        % update data to save with current segment values
+                        crrData2Save(crrTimeSmpl :  crrLastIdx) = crrData(1 : crrLastIdx - crrTimeSmpl + 1);
+                    end
+                    % conversion to microVolt
+                    crrData2Save = crrData2Save * V_to_uV;
+                    
+                    % conversion to int16
+                    % crrData2Save = int16(crrData2Save);
+                otherwise
+            end
+            
+            % normalise if requested
+            if setOffsetToZeroFlag && ismember(EntityInfo(chan).EntityLabel(1:4), {'elec', 'filt'})
+                % subtract mean
+                crrData2Save = crrData2Save - mean(crrData2Save);
+                
+                % check for filtering flag
+                if ismember(EntityInfo(chan).EntityLabel(1:4), {'elec'})
+                    crrAmplIdx = str2num(EntityInfo(chan).EntityLabel(5:8));
+                    crrData2Save = filtDataUser(crrData2Save, performFiltering{1}(crrAmplIdx), cutOffFrequencies{1}(crrAmplIdx), SegmentInfo.SampleRate);
+                end
+            end
+            
+            % convert to mV if analog data
+            if ismember(EntityInfo(chan).EntityLabel(1:4), {'anlg'})
+                crrData2Save = crrData2Save/1000;
+            end
+            
+            % conversion to int16
+            % crrData2Save = int16(crrData2Save);
+            
+            % extract channel name
+            ch = extractChannel(EntityInfo(chan).EntityLabel, EntityInfo(chan).EntityLabel(1:4));
+            
+            % write data to file
+            writeDataToFile(crrData2Save, expNames, fnlUnFllId, crtdFld, EntityInfo(chan).EntityLabel(1:8), ch);
+        otherwise
+            continue
+    end
+end
+ns_CloseFile(hfile);
+
+% print useful information on a text file
+printUsefulInfo(outFolders, performFiltering, setOffsetToZeroFlag, cutOffFrequencies);
+end
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+
+
+
+%--------------------------------------------------------------------------
+function c = GetMatlabClass(nsClass)
+%--------------------------------------------------------------------------
+% Adapted from ns.h:
+if ischar(nsClass)
+    switch nsClass
+        case {'ns_EVENT_TEXT' 'ns_EVENT_CSV' 'ns_EVENT_BYTE'}
+            c = 'uint8';
+        case 'ns_EVENT_WORD'
+            c = 'uint16';
+        case 'ns_EVENT_DWORD'
+            c = 'uint32';
+        otherwise
+            c = 'unknownclass';
+    end
+end
+return
+end
+
+%--------------------------------------------------------------------------
+function ts = ConvertTimeStamps(timestamps, units)
+%--------------------------------------------------------------------------
+% Convert to base time units, cast to int32
+% Note MATLAB does rounding
+
+ts = int32(timestamps*(1/units));
+return
+end
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+function ScaleFlag = CheckScale(data)
+%--------------------------------------------------------------------------
+% This overcomes a problem with the way different manufacturers have
+% interpreted the NeuroShare standard.
+% Some return the integer values from the ADC while others return
+% pre-scaled floating point data from ns_GetAnalogData and
+% ns_GetSegmentData
+
+if all(rem(data(:),1) == 0)
+    ScaleFlag = 0;
+    return
+else
+    ScaleFlag = 1;
+end
+return
+end
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+function ch = extractChannel(crrEntityLabel, crrEntityType)
+%--------------------------------------------------------------------------
+% Extract channel corresponding to the entity starting from current
+% entity's header
+% author Luca Leonardo Bologna 17 - 03 - 2011
+
+switch(crrEntityType)
+    case {'elec', 'spks', 'filt', 'chtl'}
+        chSubStr = strtrim(crrEntityLabel(19:27));
+        ch = regexp(chSubStr, '[0-9][0-9]', 'match', 'once');
+    case 'digi'
+        chSubStr = strtrim(crrEntityLabel(19:end));
+        ch = regexprep(chSubStr, ' ', '_');
+    case {'trig', 'anlg'}
+        ch = strtrim(crrEntityLabel(19:27));
+    otherwise
+end
+end
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+function writeDataToFile(data, expNames, fnlUnFllId, crtdFld, crrEntityType, ch)
+%--------------------------------------------------------------------------
+% Write data on appropriate folder based on stream type
+% author Luca Leonardo Bologna 17 - 03 - 2011
+
+% convert to double and transpose data
+data = double(data);
+
+% extract flag membership on entity type
+[flag idx] = ismember(crrEntityType, fnlUnFllId);
+
+% error message if data are not coherent
+if ~flag
+    error('Stream and folders do not correspond. Program is exiting');
+end
+
+%  extract name of folders to save in
+foldToSaveIn = char(crtdFld{idx});
+
+% save .mat files in appropriate folder
+for i = 1 : size(foldToSaveIn, 1)
+    fileName = strtrim(char(expNames{1}(i, :)));
+    filename_mat = fullfile(foldToSaveIn(i, :), [fileName '_' ch '.mat']);
+    save(filename_mat,'data');
+end
+end
+
+
+%--------------------------------------------------------------------------
+function filteredData = filtDataUser(data2Filter, filterType, cutoffFrequency,samplingFrequency)
+%--------------------------------------------------------------------------
+% filter data if required by the user
+
+% initialise variable
+filteredData = data2Filter;
+
+% filter band type and filter flag
+filterBandType = {'no_filter'; 'high'; 'low'};
+
+% in case filtering must be applied, apply butterworth filter
+if (filterType > 1)
+    Wn_norm = cutoffFrequency/(0.5*samplingFrequency);
+    
+    % design transfer function
+    [b, a] = butter(2, Wn_norm, strtrim(filterBandType{filterType}));
+    
+    % apply filter
+    filteredData = (filter(b, a, data2Filter));
+    
+    % clear variables
+    clear b a WN_norm;
+end
+end
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+function [idxDigiMea] = getIdxDigi(EntityInfo, labl)
+%--------------------------------------------------------------------------
+% extract indices in EntityInfo corresponding to the label given in labl
+
+% initialise index array
+idxDigiMea = [];
+
+% extract all labels from EntityInfor
+crrFlCrrLbls = {EntityInfo.EntityLabel};
+
+% extract only string identifiers from labels
+allSnId = cellfun(@(y) y(1:4), crrFlCrrLbls, 'UniformOutput', 0);
+
+% find all 'digi' identifier
+idxDigi = find(ismember(allSnId, 'digi'));
+
+% for every 'digi' entity
+for z = 1 : length(idxDigi)
+    % if identifier does not refers to digital bit continue
+    if length(crrFlCrrLbls{idxDigi(z)}) <= 27
+        continue
+        % otherwise
+    else
+        % for every label passed
+        for w = 1 : length(labl)
+            % if current identifier refers to current label
+            if strcmp(char(labl(w)), crrFlCrrLbls{idxDigi(z)}(29:30))
+                % update index array
+                idxDigiMea = [idxDigiMea idxDigi(z)];
+            end
+        end
+    end
+end
+end
+%--------------------------------------------------------------------------
+
+
+%------------%--------------------------------------------------------------------------
+function [idxElectrodeMea] = getIdxElectrodes(EntityInfo, labl)
+%--------------------------------------------------------------------------
+% extract indices in EntityInfo corresponding to the label given in labl
+
+% extract all labels from EntityInfo
+crrFlCrrLbls = {EntityInfo.EntityLabel};
+
+% indices indicating used amplifier
+allElId = cellfun(@(x) x(27), crrFlCrrLbls(:), 'UniformOutput', 0);
+
+% mea indices
+idxElectrodeMea = find(~(cellfun(@isempty, regexp(allElId, labl))));
+
+% % extract string identifier
+% allNumIdent = cellfun(@(x) x(1:4), crrFlCrrLbls, 'UniformOutput', 0);
+%
+% % all stream electrode identifier
+% allElId = cellfun(@(x) x(25:27), crrFlCrrLbls, 'UniformOutput', 0);
+%
+% % indices of all stream containing an electrode name
+% logicAll = ~(cellfun(@isempty, regexp(allNumIdent, '(\<elec\>)|(\<spks\>)|(\<filt\>)|(\<chtl\>)')));
+%
+% % indices of all stream containing label
+% logicAllElId = ~(cellfun(@isempty, regexp(allElId, labl)));
+%
+% % non-empty indices for streams
+% idxAll = find(logicAll);
+%
+% % non-empty indices for electrodes
+% idxAllElId = find(logicAllElId);
+%
+% % meaA indices
+% idxElectrodeMea = intersect(idxAll,idxAllElId);
+
+end
+
+%--------------------------------------------------------------------------
+function printUsefulInfo(outFolders, performFiltering, setOffsetToZeroFlag, cutOffFrequencies)
+%--------------------------------------------------------------------------
+% print useful info
+%--------------------------------------------------------------------------
+
+% for every subexperiment output folder
+for i = 1 : size(outFolders{1}, 1)
+    
+    % write useful information on conversion in a .txt file
+    fd = fopen(fullfile(strtrim(char(outFolders{1}(i,:))),'conversion Parameters.txt'),'w+');
+    
+    % filter band type and filter flag
+    filterBandType = {'no_filter'; 'high'; 'low'};
+    
+    % create filterMessage
+    filterTypeTemp = strtrim(filterBandType{performFiltering{1}(i)});
+    
+    % select message based on chosen filter
+    if strcmp(filterTypeTemp,'no_filter')
+        filterMessage= 'no filter';
+    else
+        filterMessage= ['Butterworth ' filterTypeTemp 'pass. Cutoff frequency: ' num2str(cutOffFrequencies{1}(i))];
+    end
+    
+    % write message on setting Offset to zero
+    fwrite(fd, ['setOffsetToZeroFlag ' num2str(setOffsetToZeroFlag) sprintf('\n') ...
+        'Filtering ' filterMessage sprintf('\n')]);
+    
+    % close file
+    fclose(fd);
+    
+    % necessary to avoid a reopening of the same file
+    clear fd
+end
+end

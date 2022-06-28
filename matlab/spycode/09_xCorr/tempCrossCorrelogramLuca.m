@@ -1,0 +1,11 @@
+[a,b,indInputPeak]=find(input_train);
+[c,d,indOutputPeak]=find(output_train);
+winmsec= wsample*1000/fs;                     % window [msec]
+binmsec= binsample*1000/fs;                   % bin [msec]
+plus= rem(winmsec, binmsec);                  % Remainder of division
+x= [-(winmsec+plus):binmsec:(winmsec+plus)]';
+repInputPeak=repmat(indInputPeak',[length(x) 1]);
+temp=repmat(x,[1 length(repInputPeak)]);
+repInputPeak=repInputPeak-temp;
+binCount=histc(repInputPeak, x);
+sumCount=sum(binCount');

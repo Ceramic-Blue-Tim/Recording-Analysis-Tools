@@ -1,0 +1,140 @@
+<html>
+
+<head>
+<!-- $Revision: 1.00 $  $Date: 2002/05/24 $ -->
+<!-- DOCNAME: User Function Reference -->
+<!-- HEADSTUFF -->
+
+<title>listdlg2 (User Function Reference)</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+<!-- NAVBARTOP -->
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+  <tr>
+    <td valign="baseline" bgcolor="#B0E4FF"><b>User Function Reference</b></td>
+    <td valign="baseline" bgcolor="#B0E4FF" align="right">
+    <a href="selectdlg3.html"><img src="b_prev.gif" border="0" width="17" height="17"></a>&nbsp;&nbsp;&nbsp;
+    <a href="inputdlg2.html"><img src="b_next.gif" border="0" width="17" height="17"></a></td>
+  </tr>
+</table>
+
+<!-- FNAME: listdlg2 --> 
+<font size="+3" color="#000099">listdlg2</font> 
+
+<!-- H2 --><br>
+<p>Generate a tabbed, scrolled list dialog.</p>
+
+<!-- H2 -MANDATORY -->
+<p><font color="#000099" size=+1><b>Syntax</b></font><br></p>
+<blockquote>
+<pre>Selections = listdlg2(Lists)
+Selections = listdlg2(Lists, Title)
+Selections = listdlg2(Lists, Title, Mode)
+Selections = listdlg2(Lists, Title, Mode, Default)
+</pre>
+</blockquote>
+
+<!-- H2 -MANDATORY -->
+<p><font color="#000099" size=+1><b>Description</b></font><br></p>
+
+<p>
+<code>listdlg2</code> displays columns of choices in a resizable figure window. 
+The choices selected by the user are returned as a structure vector <code>Selections</code>.   
+The length of <code>Selections</code> is <code>nTab</code>, each element corresponding each tab.
+<code>Selections.index</code> is a cell vector, one cell per column, each listing
+the indexes of the choices made from that column. <code>Selections.tab</code>
+is an integer index of the tab to which these apply - this will match  
+the index of <code>Selections</code> unless <code>Mode=1</code>.
+Any <code>[]</code>, entries indicate no selection made, <code>Selections.index=[]</code> & 
+<code>Selections.tab=0</code> if no selection is made.
+<br><br>
+
+<code>Selections = listdlg2(Lists)</code> where:<br>
+<code>Lists</code> is a structure vector (length=no_tabs) containing fields:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>.tag</code> - a string tab label<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>.title</code> - a title for the tab page<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>.name</code> - a string cell vector of column names <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>.list</code> - a cell vector of string cell vectors of choice item names <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>.mode</code> - selection modes : <code>0</code> for mutiple (default) or <code>1</code> for single - <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>Mode=1</code> -> only 1 from each column, it must have same no cols as <code>.list</code><br>
+<br>
+<code>Selections = listdlg2(Lists, Title)</code> where:<br>
+<code>Title<code> is a string title for the selection window.<br>
+<br>
+<code>Selections = listdlg2(Lists, Title, Mode)</code> where:<br>
+<code>Mode</code> is tab selection mode : <code>0</code> for mutiple (default) or <code>1</code> for single - <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i.e. <code>Mode=1</code> allows a result from only 1 tab.<br>
+<br>
+<code>Selections = listdlg2(Lists, Title, Mode, Default)</code> where:<br>
+<code>Default</code> is a structure vector (length=no_tabs) defining the choices <br>
+initially selected.<br>
+<code>Default.index</code> is a cell vector, one cell per column, each listing<br>
+the indexes of the choices to be set in that column. Use <code>[]</code> for none.<br>
+<code>Default.tab</code> is an integer index of the tab to which these apply (optional).<br>
+The form of <code>Default</code> is the same as the function output.<br>
+<br>
+</p>
+
+<!-- H2 -MANDATORY -->
+<p><font color="#000099" size=+1><b>Examples</b></font><br></p>
+
+<p><strong>Example 1.</strong> A simple list dialog. </p>
+<blockquote>
+<pre>
+results(1).tag='axes';
+results(1).title='Choose axes for plot';
+results(1).name={'x axis';'y axis'};
+vars={'Time';'P1';'P20';'P30';'Nh';'Nl'};
+results(1).list={vars,vars};
+results(1).mode=[1,0];
+results(2).tag='lines';
+results(2).title='Choose line styles for plot';
+results(2).name={'category';'style'};
+styl={'line style';'colour';'symbols';'style & colour'...
+;'symbols & colour';'style & symbols';'all'};
+results(2).list={{'engine type';'engine build';'test type'},styl};
+results(2).mode=[0,1];
+results(3).tag='decimation';
+results(3).title='Choose marker decimation option';
+results(3).name={'level'};
+results(3).list={{'none';'10';'20';'all'}};
+results(3).mode=1;
+tit='Select Plot Details';
+deft(1).index={1,1};
+deft(2).index={[1;2;3],[1;2;3]};
+deft(3).index={1};
+sel = listdlg2(results,tit,0,deft);
+xname=vars{sel(1).index{1}}
+ynames=strvcat(vars{sel(1).index{2}})
+</pre>
+<p><img src="listdlg2.gif" width="235" height="271"></p>
+</blockquote>
+
+<!-- H2 -MANDATORY -->
+<p><font color="#000099" size=+1><b>See Also</b></font><br></p>
+<p>
+<a href="../help/techdoc/ref/listdlg.html"><code>listdlg</code></a>,
+<a href="../help/techdoc/ref/inputdlg.html"><code>inputdlg</code></a>,
+<a href="listdlg2.html"><code>inputdlg2</code></a>, 
+<a href="../help/techdoc/ref/menu.html"><code>menu</code></a>,
+<a href="selectdlg3.html"><code>selectdlg3</code></a>, 
+<code>tabdlg</code>
+</p>
+<p><br></p>
+
+<!-- H2 -->
+<table bgcolor="#ffe4b0" border="0" width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td align="left" width="20" bgcolor="#B0E4FF"><a href="selectdlg3.html">
+    <img src="b_prev.gif" border="0" align="bottom" width="17" height="17"></a>&nbsp;</td>
+    <td align="left" bgcolor="#B0E4FF">selectdlg3</td><td bgcolor="#B0E4FF"></td>
+    <td align="right" bgcolor="#B0E4FF">inputdlg2</td>
+    <td align="right" width="20" bgcolor="#B0E4FF"><a href="inputdlg2.html">
+    <img src="b_next.gif" border="0" align="bottom" width="17" height="17"></a></td>
+  </tr>
+</table>
+
+<br>
+</body>
+</html>

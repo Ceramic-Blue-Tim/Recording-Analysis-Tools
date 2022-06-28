@@ -1,0 +1,152 @@
+function MAIN_MultipleConverter( chs, extension )
+%MAIN_MULTIPLECONVERTER controls the execution of the window from
+%   which the user can insert parameters in order to retrieve (and convert)
+%   ".med"/".mcd"/... files whose names fulfill specified constraints
+
+% Created by Luca Leonardo Bologna 07 January 2007
+% Modified by Luca Leonardo Bologna on 14 March 2011 for compatibility with
+% neuroshare
+
+% -----------------------------
+% ---------- Variables settings
+% -----------------------------
+%channels to be converted
+idCh=chs;
+
+%desired output (set to microvolt)
+output = 'uV';
+
+% initialization of variable used to catch the user's answer
+answerMulConvWinHandle='OK';
+
+% initialization of variable used to indicate the files to be converted
+idx=[];
+
+% ask for the folder to start from (root folder)
+userfolder = uigetdir(pwd, 'Select the root folder');
+
+% import library for converting .mcd files
+menu_ImportMCD();
+
+%   check the choice of the root folder
+if  strcmp(num2str(userfolder), '0')
+    errordlg('Selection Failed - End of Session', 'Error');
+    return
+else %if the chosen folder exists
+    while strcmpi(answerMulConvWinHandle,'OK') && isempty(idx)
+        % prompt a window for parameter insertion
+        [outputMulConvWinHandle, answerMulConvWinHandle, chosenParameters] = multipleConversionWindow(userfolder,['".' extension '"']);
+        
+        %
+        if strcmpi(answerMulConvWinHandle,'Cancel') % if the answer is 'Cancel' quit the window
+            delete (outputMulConvWinHandle);
+            return
+        else
+            % if 'OK' extract the list of files names based on user parameters
+            [namesList, startingFoldersList] = extractFilesNames(userfolder,chosenParameters,extension);
+            
+            % if some file has been found
+            if ~isempty(namesList)
+                % 
+                fileTypes = extractNumberChannels(namesList,extension);
+                
+                %generate the list of experiments names without extension to be used during the conversion
+                expNames = generateExpNames(namesList, fileTypes);
+                
+                % generate the list of output folders number
+                outFolders = genOutputFolders(namesList, fileTypes);
+                
+                % prompt user with list of files to choose
+                [outputExtFilesChoiceWinHandles, answerExtFilesChoiceWinHandles, filesToConvert, ...
+                    expNamesChosen, outFoldersChosen, fileTypesChosen, nMeas, ...
+                    performFilteringChosen, cutOffFrequenciesChosen, datConversionFlag, ...
+                    matConversionFlag, anaConversionFlag, setOffsetToZeroFlag, ...
+                    filtConversionFlag, rawDataConversionFlag] = ...
+                    extractedFilesToConvertNamesChoiceWindow(namesList, ...
+                    fileTypes, expNames, outFolders, startingFoldersList);
+                
+                % close the window
+                delete (outputMulConvWinHandle);
+                
+                % if the user confirmed the operation
+                if strcmpi(answerExtFilesChoiceWinHandles,'OK')
+                    
+                    % number of files to convert
+                    filesToConvertNum = size(filesToConvert,2);
+                    
+                    % for each file to convert
+                    for i = 1 : filesToConvertNum
+                        
+                        % delete trailing blank characters
+                        fileName = strtrim(filesToConvert{i});
+                        
+                        % extracts file's absolute path
+                        [startFolder crrFileNameNoExt ext] = fileparts(fileName);
+                        
+                        % extracts file's containing folder
+                        [startFolderRel nameContFold]= fileparts(startFolder);
+                        
+                        % build the message to prompt
+                        blankStr = blanks(1);
+                        
+                        
+                        nameContFold = regexprep(nameContFold,{'_'},{'\_'});
+                        
+                        crrFileNameNoExt = regexprep(crrFileNameNoExt,{'_'},{'\_'});
+                        
+                        dispayedFileName = [fullfile(nameContFold, crrFileNameNoExt), ext];
+                        
+                        waitMessage = ['Converting file: ' blankStr '...' dispayedFileName ' (file nr.' blanks(1)  num2str(i) blankStr 'out of' blankStr num2str(filesToConvertNum) blankStr 'files to convert)'];
+                        if ~ispc()
+                            waitMessage = strrep(waitMessage, '_', '\_');
+                        end
+                        
+                        % prompt a waiting bar
+                        % waitbarHandle =   waitbarImproved((i-1)/filesToConvertNum, ([blanks(5) waitMessage blanks(5)]));
+                        
+                        waitbarHandle = waitbar((i-1)/filesToConvertNum,([blanks(5) waitMessage blanks(5)]));
+                        pos = get(waitbarHandle,'Position');
+                        set(waitbarHandle, 'Position', [pos(1) 40 pos(3) pos(4)]);
+                        
+                        % build the appropriate idCh
+                        if cell2mat(fileTypesChosen(i)) >= 64
+                            idChAct = repmat(idCh, nMeas(i), 1);
+                        end
+                        
+                        % build .mat files from data
+                        convertOnExtension_ns(extension, idChAct, output, startFolder, fileName,...
+                            expNamesChosen(i), outFoldersChosen(i), performFilteringChosen(i), ...
+                            cutOffFrequenciesChosen(i), rawDataConversionFlag,datConversionFlag, matConversionFlag, anaConversionFlag,...
+                            setOffsetToZeroFlag, filtConversionFlag, nMeas(i));
+                        
+                        % delete file if user checked the appropriate box
+                        if chosenParameters{8};
+                            deleteBasedOnExtension(extension,fileName);
+                        end
+                        
+                        %delete the waitbar
+                        delete (waitbarHandle);
+                        
+                        %reset idx
+                        idx=[];
+                        
+                        % set button value in order to close window
+                        answerMulConvWinHandle='Cancel';
+                    end
+                else
+                    % if the user pressed 'Cancel'
+                    answerMulConvWinHandle = questdlg('Press "OK" to re-insert conditions, press "Cancel" to abort operation','','OK','Cancel','OK');
+                    idx=[];
+                    continue
+                end
+                % else if no files to convert exists with given parameters
+            else
+                delete (outputMulConvWinHandle);
+                h=warndlg(sprintf('No file matching the chosen conditions was found.\nTry again'),'!!warning!!');
+                
+                % wait for user's answer
+                waitfor(h);
+            end
+        end
+    end
+end

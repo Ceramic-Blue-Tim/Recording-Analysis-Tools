@@ -1,0 +1,110 @@
+<html>
+
+<head><!-- $Revision: 1.00 $  $Date: 2002/05/24 $ -->
+<!-- DOCNAME: User Function Reference -->
+<!-- HEADSTUFF -->
+
+<title>selectdlg (User Function Reference)</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+<!-- NAVBARTOP -->
+
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+  <tr>
+    <td valign="baseline" bgcolor="#B0E4FF"><b>User Function Reference</b></td>
+    <td valign="baseline" bgcolor="#B0E4FF" align="right">
+    <a href="dispdlg.html"><img src="b_prev.gif" border="0" width="17" height="17"></a>&nbsp;&nbsp;&nbsp;
+    <a href="selectdlg2.html"><img src="b_next.gif" border="0" width="17" height="17"></a></td>
+  </tr>
+</table>
+<!-- FNAME: selectdlg -->
+<font size="+3" color="#000099">selectdlg</font> 
+
+<!-- H2 --><br>
+<p>Generate a scrolled column selection dialog.</p>
+<!-- H2 -MANDATORY -->
+
+<p><font color="#000099" size="+1"><b>Syntax</b></font><br>
+
+<blockquote>
+  <pre>Choice = selectdlg(Itemlist)
+Choice = selectdlg(Itemlist, Header)
+Choice = selectdlg(Itemlist, Header, Mode)
+Choice = selectdlg(Itemlist, Header, Mode, Default)
+</pre>
+</blockquote>
+<!-- H2 -MANDATORY -->
+
+<p><font color="#000099" size="+1"><b>Description</b></font><br>
+</p>
+
+<p><code>selectdlg</code> displays a column of radio buttons in a fixed size figure
+window. The calling process is stopped to await the user selection. The buttons selected
+by the user are returned as <code>Choice</code>, an index into the <code>Itemlist</code>
+cell array. <code>[]</code> is returned if no selection is made, or the dialog is
+cancelled or closed. <br>
+<br>
+
+<code>Choice = selectdlg(Itemlist)</code> <code>Itemlist</code> is a string cell array. <br>
+<br>
+
+<code>Choice = selectdlg(Itemlist, Header) Header</code> is a prompt string displayed at
+the top of the slection list. <br>
+<br>
+
+<code>Choice = selectdlg(Itemlist, Header, Mode) Mode</code> determines whether the user
+can make multiple selections - <code>0</code> for multiple (default), <code>1</code> for single. <br>
+<br>
+
+<code>Choice = selectdlg(Itemlist, Header, Mode, Default) Default</code> is a vector of
+indexes to the buttons initially selected. <br>
+<br>
+</p>
+<!-- H2 -MANDATORY -->
+
+<p><font color="#000099" size="+1"><b>Examples</b></font><br>
+</p>
+
+<p><strong>Example 1.</strong> Make a simple selection. </p>
+
+<blockquote>
+  <pre>%Create a simple selection of numbers
+  items={'One','Two','Three','Four','Five','Six','Seven','Eight','Nine'};
+  sel = selectdlg(items); 
+  items(sel) </pre>
+  <p><img src="Selectdlg.gif" width="132" height="346"></p>
+</blockquote>
+<!-- H2 -MANDATORY -->
+
+<p><font color="#000099" size="+1"><b>See Also</b></font><br>
+</p>
+
+<p>
+<a href="../help/techdoc/ref/menu.html"><code>menu</code></a>,
+<a href="selectdlg2.html"><code>selectdlg2</code></a>, 
+<a href="selectdlg3.html"><code>selectdlg3</code></a>,
+<a href="../help/techdoc/ref/listdlg.html"><code>listdlg</code></a>,
+<a href="listdlg2.html"><code>listdlg2</code></a>
+</p>
+
+<p><br>
+</p>
+<!-- H2 -->
+
+<table bgcolor="#ffe4b0" border="0" width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td align="left" width="20" bgcolor="#B0E4FF"><a href="dispdlg.html">
+    <img src="b_prev.gif" border="0" align="bottom" width="17" height="17"></a>&nbsp;</td>
+    <td align="left" bgcolor="#B0E4FF">dispdlg</td>
+    <td bgcolor="#B0E4FF"></td>
+    <td align="right" bgcolor="#B0E4FF">selectdlg2</td>
+    <td align="right" width="20" bgcolor="#B0E4FF"><a href="selectdlg2.html">
+    <img src="b_next.gif" border="0" align="bottom" width="17" height="17"></a></td>
+  </tr>
+</table>
+
+<p><br>
+</p>
+</body>
+</html>
