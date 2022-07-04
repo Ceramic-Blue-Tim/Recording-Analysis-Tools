@@ -528,6 +528,10 @@ if GenFigure
     end
     
     hold off;
+
+if ~GenFigure
+    close()
+end
 end
 
 end % main function
@@ -549,8 +553,4 @@ fname = fieldnames(paramStruct);
 fval = struct2cell(paramStruct);
 paramCell = [fname, fval]';
 paramCell = paramCell(:);
-
-if ~GenFigure
-    close()
-end
 end % struct2opt
