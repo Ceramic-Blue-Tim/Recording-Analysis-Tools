@@ -8,3 +8,4 @@
 *.csv
 *.raw
 __pycache__/
+.vscode
