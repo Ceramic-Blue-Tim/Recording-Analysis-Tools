@@ -8,7 +8,8 @@ function [burst_detection_struct] = burst_detection(Fs, time_ms, num_electrode, 
     Mean_burst_frequency    = zeros(num_electrode, 1);
     dev_interburst_interval = zeros(num_electrode, 1);
     % All_interburst_interval_sec=zeros(num_electrode, 1);
-
+    
+    tic
     for i=1:num_electrode
         if visual_on==1
             fig1                   = figure;
