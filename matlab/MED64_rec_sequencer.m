@@ -26,11 +26,11 @@ addpath(genpath('functions'))
         f_get_type      = 'one';    % File analysis mode single 'one' or multiple 'all'
     
     % Recording split list
-        split_list      = ["C1Exp1", "C1Exp2", "C1Exp4", "C1Exp5", "C1Exp6"]; % Recordings to split
+        split_list      = ["C1Exp1", "C1Exp2", "C1Exp4", "C1Exp5", "C1Exp6"]; % Experiments to associate with information file
 
     % Splitting sequence
-        sequence_label      = ["stim_off1", "stim_on1", "stim_off2", "stim_on2", "stim_off3"];
-        sequence_duration_s = [5*60, 5*60, 5*60, 5*60, 5*60];      % [s]
+        sequence_label      = ["stim_off1", "stim_on1", "stim_off2", "stim_on2", "stim_off3"]; % Label for each sequence
+        sequence_duration_s = [5*60, 5*60, 5*60, 5*60, 5*60]; % Duration of sequences [s]
 % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 % Ask files to analyze to user

@@ -1,4 +1,4 @@
-function [xPoints, yPoints] = plotSpikeRaster(spikes, varargin, GenFigure)
+function [xPoints, yPoints] = plotSpikeRaster(spikes, varargin)
 
 % PLOTSPIKERASTER Create raster plot from binary spike data or spike times
 %   Efficiently creates raster plots with formatting support. Faster than
@@ -153,7 +153,7 @@ relSpikeStartTime = p.Results.RelSpikeStartTime;
 rasterWindowOffset = p.Results.RasterWindowOffset;
 vertSpikePosition = p.Results.VertSpikePosition;
 vertSpikeHeight = p.Results.VertSpikeHeight;
-GenFigure = p.GenFigure;
+GenFigure = p.Results.GenFigure;
 
 if ~isnan(rasterWindowOffset) && relSpikeStartTime==0
     relSpikeStartTime = rasterWindowOffset;
