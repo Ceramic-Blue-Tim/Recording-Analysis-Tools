@@ -22,6 +22,23 @@ Matlab functions to analyze recordings mainly from MEA
 <!-- ##### Getting started ##### -->
 # Getting started
 
+## Generate experiment information file for recordings
+
+* Edit script ```MED64_rec_sequencer.m``` as below :
+* 
+``` Matlab
+    % Recording file format
+        f_type          = 'bin';    % File format of trace
+        f_get_type      = 'one';    % File analysis mode single 'one' or multiple 'all'
+    
+    % Recording split list
+        split_list      = ["C1Exp1", "C1Exp2", "C1Exp4", "C1Exp5", "C1Exp6"]; % Experiments to associate with information file
+
+    % Splitting sequence
+        sequence_label      = ["stim_off1", "stim_on1", "stim_off2", "stim_on2", "stim_off3"];  % Label for each sequence
+        sequence_duration_s = [5*60, 5*60, 5*60, 5*60, 5*60];      % Duration of sequences [s]
+``` 
+
 ## Run analysis on MED64 recording stored as .bin file
 
 * Edit script ```MED64_rec_analysis.m``` as below :
