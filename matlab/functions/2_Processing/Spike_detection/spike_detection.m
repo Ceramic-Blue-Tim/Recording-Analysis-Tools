@@ -42,6 +42,7 @@ function [spike_detection_struct] = spike_detection(Fs, time_ms, num_electrode, 
         [posspks, poslocs] = findpeaks(HP_Signal_fix(:,i), Fs,'MinPeakHeight',peak_th );
         [~, id] = lastwarn; warning('off', id);
         [negspks, neglocs] = findpeaks(-HP_Signal_fix(:,i), Fs,'MinPeakHeight',peak_th );
+        [~, id] = lastwarn; warning('off', id);
         
         all_locs            = vertcat(poslocs,neglocs);
         all_spks            = vertcat(posspks,-negspks);

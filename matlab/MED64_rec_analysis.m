@@ -33,7 +33,7 @@
         
         % Analysis parameters
             compute_spike_detection     = true;     % Compute spike detection
-            compute_burst_detection     = false;     % Compute burst detection
+            compute_burst_detection     = true;     % Compute burst detection
             compute_spike_sorting       = false;    % Compute spike sorting
             compute_spike_clustering    = false;    % Compute spike clustering
             compute_wavelet             = false;    % Compute wavelet related analysis
