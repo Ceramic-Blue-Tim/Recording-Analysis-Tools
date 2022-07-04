@@ -9,3 +9,6 @@
 *.raw
 __pycache__/
 .vscode
+
+# Local build for documentation
+docs/src/build/
