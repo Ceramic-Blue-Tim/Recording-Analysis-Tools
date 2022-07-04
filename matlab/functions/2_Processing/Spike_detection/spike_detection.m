@@ -40,6 +40,7 @@ function [spike_detection_struct] = spike_detection(Fs, time_ms, num_electrode, 
         STDEV   = std(HP_Signal_fix(:,i));
         peak_th = mag*STDEV;
         [posspks, poslocs] = findpeaks(HP_Signal_fix(:,i), Fs,'MinPeakHeight',peak_th );
+        [~, id] = lastwarn; warning('off', id);
         [negspks, neglocs] = findpeaks(-HP_Signal_fix(:,i), Fs,'MinPeakHeight',peak_th );
         
         all_locs            = vertcat(poslocs,neglocs);
@@ -91,7 +92,7 @@ function [spike_detection_struct] = spike_detection(Fs, time_ms, num_electrode, 
     for k= 1:num_electrode
         A{k}=rot90(All_spikes{k, 1});
     end
-    [raster_x, raster_y] = plotSpikeRaster(A);
+    [raster_x, raster_y] = plotSpikeRaster(A, 'GenFigure', false);
 
     spike_detection_struct = struct(... 
         'all_spikes',           {All_spikes},...
@@ -102,10 +103,15 @@ function [spike_detection_struct] = spike_detection(Fs, time_ms, num_electrode, 
         'mean_amp_pos_spikes',  {pos_avg_amp},...
         'mean_amp_neg_spikes',  {neg_avg_amp},...
         'all_ISI_secs',         {All_interspike_interval_sec}, ...
-        'mean_ISI,',            {interspike_interval_sec_avg}, ...
+        'mean_ISI',             {interspike_interval_sec_avg}, ...
         'raster_x',             {raster_x}, ...
         'raster_y',             {raster_y}...
     );
 
-    fprintf("[Computation time] Spike detection : %s seconds\n", toc);
+    if toc < 60
+        fprintf("[Computation time] Spike detection : %s seconds\n", toc);
+    else
+        fprintf("[Computation time] Spike detection : %s minutes\n", minutes(seconds(toc)));
+    end
+
 end
