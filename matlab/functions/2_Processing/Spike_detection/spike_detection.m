@@ -13,7 +13,7 @@
 % > **19 Jun 2020** : file creation (TO)
 % > **30 Jun 2022** : reorganise spike detection data as a structure (RB)
 
-function [spike_detection_struct] = spike_detection(Fs, time_ms, num_electrode, HP_Signal_fix, v, mag)
+function [spike_detection_struct] = spike_detection(Fs, time_ms, num_electrode, HP_Signal_fix, v, mag, sequence_label, sequence_duration_s)
     if v==1
         fig1 = figure;
         fig1.PaperUnits      = 'centimeters';
@@ -95,6 +95,8 @@ function [spike_detection_struct] = spike_detection(Fs, time_ms, num_electrode, 
     [raster_x, raster_y] = plotSpikeRaster(A, 'GenFigure', false);
 
     spike_detection_struct = struct(... 
+        'sequence_label',       {sequence_label}, ...
+        'sequence_duration_s',  {sequence_duration_s}, ...
         'all_spikes',           {All_spikes},...
         'all_pos_spikes',       {Pos_all_spikes},...
         'all_neg_spikes',       {Neg_all_spikes},...
@@ -109,9 +111,9 @@ function [spike_detection_struct] = spike_detection(Fs, time_ms, num_electrode, 
     );
 
     if toc < 60
-        fprintf("[Computation time] Spike detection : %s seconds\n", toc);
+        fprintf("[Computation time] Spike detection : %s\n", seconds(toc));
     else
-        fprintf("[Computation time] Spike detection : %s minutes\n", minutes(seconds(toc)));
+        fprintf("[Computation time] Spike detection : %s\n", minutes(seconds(toc)));
     end
 
 end

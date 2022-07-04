@@ -19,14 +19,13 @@
 % > **20 Jun 2022** : split time and signal from bin reading to save memory (RB)
 % > **07 Jul 2022** : add check for experiment parameters (RB)
 
-function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_param, save_param)
+function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, save_param)
 % | **Trace analysis (MED64)**
 % |
 % | **f_type** : file format for trace file 'mat' or 'bin'
 % | **fpath** : path to trace file
 % | **rec_duration_secs** : recording duration in seconds
 % | **compute_param** : computation to perform for analysis
-% | **plot_param** : plotting parameters for figures
 % | **save_param** : parameters for analysis saving
 %
 % Perform analysis of a trace : filter, spike detection, burst detection
@@ -37,12 +36,6 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
     fpath_exp_params = fullfile(dir, exp_name + ".mat");
     if isfile(fpath_exp_params)
         sequence = read_exp_params(fpath_exp_params);
-    else
-        sequence = struct(...
-            'label',        [""], ...
-            'duration_s',   [rec_duration_secs], ...
-            'nb',           1 ...
-        );
     end
 
 %% Read trace file %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,6 +51,15 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
     [LP_Signal_fix, HP_Signal_fix]              = filter_signal(rec_param.fs, rec_param.nb_chan, t, Signal);
 
 %% Analysis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Create single sequence if no information file
+    if ~isfile(fpath_exp_params)
+        sequence = struct(...
+            'label',        ["recording"], ...
+            'duration_s',   [length(t)], ...
+            'nb',           1 ...
+        );
+    end
+
     % Get sample range for sequences
     [id_start, id_stop] = get_seq_id_range(rec_param.fs, sequence, length(t));
 
@@ -69,7 +71,9 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
             visual_on       = 0;
             magnification   = 5; % magnification *STDEV
         
-            spike_detection_struct(i) = spike_detection(rec_param.fs, t(id_start(i):id_stop(i)), rec_param.nb_chan, HP_Signal_fix((id_start(i):id_stop(i)),:), visual_on, magnification);
+            spike_detection_struct(i) = spike_detection(rec_param.fs, t(id_start(i):id_stop(i)), rec_param.nb_chan, ...
+                                                        HP_Signal_fix((id_start(i):id_stop(i)),:), visual_on, magnification, ...
+                                                        sequence.label(i), sequence.duration_s(i));
         end
 
         % % Burst detection 
