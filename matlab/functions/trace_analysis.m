@@ -55,15 +55,15 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
     % Get sample range for sequences
     [id_start, id_stop] = get_seq_id_range(rec_param.fs, sequence, length(t));
 
+    fprintf("[Compute] Spike detection : %s\n", exp_name);
     for i = 1:sequence.nb
         % Spike detection
         if compute_param.spike_detection
-            fprintf("[Compute] Spike detection : %s\n", exp_name);
-
+            fprintf("[Compute] Spike detection sequence : %s\n", sequence.label(i));
             visual_on       = 0;
             magnification   = 5; % magnification *STDEV
         
-            spike_detection_struct{i} = spike_detection(rec_param.fs, t(id_start(i):id_stop(i)), rec_param.nb_chan, HP_Signal_fix((id_start(i):id_stop(i)),:), visual_on, magnification);
+            spike_detection_struct(i) = spike_detection(rec_param.fs, t(id_start(i):id_stop(i)), rec_param.nb_chan, HP_Signal_fix((id_start(i):id_stop(i)),:), visual_on, magnification);
         end
 
         % % Burst detection 

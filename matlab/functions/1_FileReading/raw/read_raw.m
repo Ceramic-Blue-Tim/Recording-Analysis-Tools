@@ -62,7 +62,7 @@ function [t, Signal, fname_no_ext, rec_param] = read_raw(raw_fpath, rec_duration
     
         clear file_format session_start sampling_freq conv_factor active_channels
 
-        fprintf(sprintf("[Loading] : %s\n", fname_no_ext));   % Display file selected
+        fprintf(sprintf("[Loading] Recording : %s\n", fname_no_ext));   % Display file selected
         [t, Signal] = rawshort2signal(raw_fpath, raw_fid, foffs, rec_param);
         fclose(raw_fid);
     end

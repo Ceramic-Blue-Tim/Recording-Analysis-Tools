@@ -41,7 +41,7 @@ function [t, Signal, fname_no_ext, rec_param] = read_bin(bin_fpath, rec_duration
         fclose(hdr_fid);
         
     % Load signal from binary file
-        fprintf(sprintf("[Loading] : %s\n", fname_no_ext));   % Display file selected
+        fprintf(sprintf("[Loading] Recording : %s\n", fname_no_ext));   % Display file selected
         [t, Signal] = binshort2signal(bin_fpath, rec_param);
 
 end
