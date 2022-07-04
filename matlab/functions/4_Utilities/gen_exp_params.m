@@ -6,4 +6,5 @@ function gen_exp_params(dir_path, exp_name, label, duration_s)
     );
 
     save(fullfile(dir_path, exp_name + ".mat"), 'sequence');
+    fprintf("[Saved] : Sequence information experiment %s", exp_name);
 end

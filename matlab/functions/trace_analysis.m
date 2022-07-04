@@ -48,6 +48,7 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
     end
 
     % Filter signal
+    fprintf("[Compute] Filtering : %s ", exp_name);
     [LP_Signal_fix, HP_Signal_fix]              = filter_signal(rec_param.fs, rec_param.nb_chan, t, Signal);
 
 %% Analysis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,14 +58,18 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
     for i = 1:sequence.nb
         % Spike detection
         if compute_param.spike_detection
+            fprintf("[Compute] Spike detection : %s ", exp_name);
+
             visual_on       = 0;
             magnification   = 5; % magnification *STDEV
         
-            spike_detection_struct(i) = spike_detection(rec_param.fs, t(id_start(i):id_stop(i)), rec_param.nb_chan, HP_Signal_fix((id_start(i):id_stop(i)),:), visual_on, magnification);
+            spike_detection_struct{i} = spike_detection(rec_param.fs, t(id_start(i):id_stop(i)), rec_param.nb_chan, HP_Signal_fix((id_start(i):id_stop(i)),:), visual_on, magnification);
         end
 
         % % Burst detection 
         % if compute_param.burst_detection
+        %     fprintf("[Compute] Burst detection : %s ", exp_name);
+            
         %     bin_win= 100; % msec
         %     burst_th=5;
         %     visual_on=0;
@@ -79,24 +84,26 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
 %% Saving %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Save data
     if save_param.data
-        spike_detection_save_path = sprintf("%s%s%s_spike_detection.mat", save_param.path, filesep, fname_no_ext);
         % Spike detection
         if compute_param.spike_detection
+            spike_detection_save_path = sprintf("%s%s%s_spike_detection.mat", save_param.path, filesep, fname_no_ext);
+            fprintf("[Saved] Spike detection of %s at %s", exp_name, spike_detection_save_path);
             save(spike_detection_save_path, 'spike_detection_struct');
         end
 
-        % burst_detection_save_path = sprintf("%s%s%s_burst_detection.mat", save_param.path, filesep, fname_no_ext);
-        % % Burst detection
-        % if compute_param.burst_detection
-        %     save(burst_detection_save_path, ...
-        %         'burst_locs', ...
-        %         'burst_spikes', ...
-        %         'All_interburst_interval_sec', ...
-        %         'Mean_burst_frequency', ...
-        %         'Stdev_interburst_interval', ...
-        %         'inter_burst_interval_CV' ...
-        %     );
-        % end
+        % Burst detection
+        if compute_param.burst_detection
+            burst_detection_save_path = sprintf("%s%s%s_burst_detection.mat", save_param.path, filesep, fname_no_ext);
+            fprintf("[Saved] Burst detection of %s at %s", exp_name, burst_detection_save_path);
+            save(burst_detection_save_path, ...
+                'burst_locs', ...
+                'burst_spikes', ...
+                'All_interburst_interval_sec', ...
+                'Mean_burst_frequency', ...
+                'Stdev_interburst_interval', ...
+                'inter_burst_interval_CV' ...
+            );
+        end
     end
     
 end
