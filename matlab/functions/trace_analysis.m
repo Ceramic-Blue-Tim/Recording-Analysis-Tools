@@ -30,6 +30,8 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, save_pa
 %
 % Perform analysis of a trace : filter, spike detection, burst detection
 
+fprintf(">>> %s\n", datetime('now'))
+
 %% Check experiment information of recording %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Experiment information of recording
     [dir, exp_name, ~] = fileparts(fpath);
@@ -95,7 +97,7 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, save_pa
     % Save data 
     if save_param.data
         fprintf("[Saving] Analysis : %s\n", exp_name);
-        
+
         % Spike detection
         if compute_param.spike_detection
             spike_detection_save_path = sprintf("%s%s%s_spike_detection.mat", save_param.path, filesep, fname_no_ext);
@@ -111,6 +113,6 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, save_pa
         end
     end
 
-    fprintf("==================================================\n");
+    fprintf("====================================================================================================\n");
     
 end

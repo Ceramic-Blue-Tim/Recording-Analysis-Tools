@@ -111,10 +111,10 @@ function [spike_detection_struct] = spike_detection(Fs, time_ms, num_electrode, 
         'raster_y',             {raster_y}...
     );
 
-    if toc < 60
-        fprintf("[Computation time] Spike detection : %s\n", seconds(toc));
-    else
-        fprintf("[Computation time] Spike detection : %s\n", minutes(seconds(toc)));
-    end
+    % if toc < 60
+    %     fprintf("[Computation time] Spike detection : %s\n", seconds(toc));
+    % else
+    %     fprintf("[Computation time] Spike detection : %s\n", minutes(seconds(toc)));
+    % end
 
 end

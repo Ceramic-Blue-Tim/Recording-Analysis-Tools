@@ -64,10 +64,10 @@ function [burst_detection_struct] = burst_detection(Fs, time_ms, num_electrode, 
         end
     end
 
-    if toc < 60
-        fprintf("[Computation time] Burst detection : %s\n", seconds(toc));
-    else
-        fprintf("[Computation time] Burst detection : %s\n", minutes(seconds(toc)));
-    end
+    % if toc < 60
+    %     fprintf("[Computation time] Burst detection : %s\n", seconds(toc));
+    % else
+    %     fprintf("[Computation time] Burst detection : %s\n", minutes(seconds(toc)));
+    % end
 
 end
