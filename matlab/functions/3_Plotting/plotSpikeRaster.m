@@ -137,7 +137,7 @@ p.addParamValue('RelSpikeStartTime',0,@(x) isnumeric(x) && isscalar(x));
 p.addParamValue('RasterWindowOffset',NaN,@(x) isnumeric(x) && isscalar(x));
 p.addParamValue('VertSpikePosition',0,@(x) isnumeric(x) && isscalar(x));
 p.addParamValue('VertSpikeHeight',1,@(x) isnumeric(x) && isscalar(x));
-p.addParamValue('GenFigure',0, @islogical);
+p.addParamValue('GenFigure',true, @islogical);
 p.parse(spikes,varargin{:});
 
 spikes                  = p.Results.spikes;

@@ -25,10 +25,10 @@ fprintf(">>> %s\n", datetime('now'))
 %% Get data from file %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Experiment information of recording from .mat file
     [dir, exp_name, ~] = fileparts(fpath);
-    fprintf("[Plotting] : %s\n", exp_name);
+    fprintf("[Plotting] %s\n", exp_name);
     fpath_exp_params = fullfile(dir, exp_name + ".mat");
     if isfile(fpath_exp_params)
-        fprintf("[Loading] : Experiment information file from %s\n", fpath_exp_params);
+        fprintf("[Loading] Experiment information file from : %s\n", fpath_exp_params);
         [sequence, stim] = read_exp_params(fpath_exp_params);
     else
         warning("Information file for experiment %s not found", exp_name);
@@ -39,13 +39,13 @@ fprintf(">>> %s\n", datetime('now'))
     rec_param   = read_hdr(hdr_path);
 
     % Analysis
-    dir_analysis            = fileparts(dir, "analysis");
-    fpath_spike_detection   = fullfile(dir_analysis, exp_name+"_spike_detection.mat");
-    fpath_burst_detection   = fullfile(dir_analysis, exp_name+"_burst_detection.mat");
+    dir_analysis            = fullfile(fileparts(dir), "analysis");
+    fpath_spike_detection   = fullfile(dir_analysis, exp_name + "_spike_detection.mat");
+    fpath_burst_detection   = fullfile(dir_analysis, exp_name + "_burst_detection.mat");
     
     % Load spike detection
     if isfile(fpath_spike_detection)
-        fprintf("[Loading] : Spike detection analysis %s\n", exp_name);
+        fprintf("[Loading] Spike detection analysis : %s\n", exp_name);
         load(fpath_spike_detection, 'spike_detection_struct');
     else
         warning("Spike detection analysis for experiment %s not found", exp_name)
@@ -53,10 +53,10 @@ fprintf(">>> %s\n", datetime('now'))
 
     % Load burst detection
     if isfile(fpath_burst_detection)
-        fprintf("[Loading] : Burst detection analysis %s\n", exp_name);
+        fprintf("[Loading] Burst detection analysis : %s\n", exp_name);
         load(fpath_burst_detection, 'burst_detection_struct');
     else
-        warning("Spike detection analysis for experiment %s not found", exp_name)
+        warning("Burst detection analysis for experiment %s not found", exp_name)
     end
 
 
@@ -70,9 +70,7 @@ fprintf(">>> %s\n", datetime('now'))
     %     );
     % end
 
-    fprintf("[Compute] Plotting : %s\n", exp_name);
-    raster_sequence_no_stim(spike_detection_struct, exp_name, rec_param, sequence)
-    my_sexy_function(spike_detection_struct, exp_name, rec_param, sequence, stim)
+    raster_sequence_no_stim(spike_detection_struct, exp_name, rec_param, sequence, stim)
 
 %% Saving %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Save data 
