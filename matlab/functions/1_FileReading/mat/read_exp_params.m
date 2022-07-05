@@ -11,7 +11,8 @@
 % @details
 % > **01 Jul 2022** : file creation (RB)
 
-function [exp_sequences] = read_exp_params(fpath)
+function [exp_sequences, exp_stim] = read_exp_params(fpath)
     exp_params      = load(fpath);
     exp_sequences   = exp_params.sequence;
+    exp_stim        = exp_params.stim;
 end

@@ -37,7 +37,7 @@ fprintf(">>> %s\n", datetime('now'))
     [dir, exp_name, ~] = fileparts(fpath);
     fpath_exp_params = fullfile(dir, exp_name + ".mat");
     if isfile(fpath_exp_params)
-        sequence = read_exp_params(fpath_exp_params);
+        [sequence, ~] = read_exp_params(fpath_exp_params);
     end
 
 %% Read trace file %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

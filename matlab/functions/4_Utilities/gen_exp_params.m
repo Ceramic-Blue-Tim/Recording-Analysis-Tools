@@ -27,7 +27,7 @@ function gen_exp_params(dir_path, exp_name, label, duration_s, stim_electrodes, 
     % Fetch stimulation time stamp if availables
     fprintf("[Loading] : Stimulation time stamps experiment %s\n", exp_name);
     [parent_dir_path]   = fileparts(dir_path);
-    fpath_stim_tstamp   = fullfile(parent_dir_path, 'stim_stamp', exp_name+".csv");
+    fpath_stim_tstamp   = fullfile(parent_dir_path, 'stim_tstamp', exp_name+".csv");
     tstamp              = tstamp2array(fpath_stim_tstamp);
     stim.tstamp         = tstamp;
 

@@ -36,7 +36,7 @@ function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, plot_pa
     [dir, exp_name, ~] = fileparts(fpath);
     fpath_exp_params = fullfile(dir, exp_name + '.mat');
     if isfile(fpath_exp_params)
-        exp_sequences = read_exp_params(fpath_exp_params);
+        [sequence, ~] = read_exp_params(fpath_exp_params);
     end
 
 %% Read trace file %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -25,7 +25,7 @@ Matlab functions to analyze recordings mainly from MEA
 ## Generate experiment information file for recordings
 
 * Edit script ```MED64_rec_sequencer.m``` as below :
-* 
+
 ``` Matlab
     % Recording file format
         f_type          = 'bin';    % File format of trace
@@ -37,6 +37,8 @@ Matlab functions to analyze recordings mainly from MEA
     % Splitting sequence
         sequence_label      = ["stim_off1", "stim_on1", "stim_off2", "stim_on2", "stim_off3"];  % Label for each sequence
         sequence_duration_s = [5*60, 5*60, 5*60, 5*60, 5*60];      % Duration of sequences [s]
+        stim_electrodes     = [39, 40, 47, 48, 55, 56, 63, 64]; % Stimulated electrodes
+        stim_width          = 50; % Width of stimulation [ms]
 ``` 
 
 ## Run analysis on MED64 recording stored as .bin file
@@ -99,6 +101,63 @@ Matlab functions to analyze recordings mainly from MEA
 * Run script
 * Specify binary file(s) to analyze
 * All data will be stored in the folder ```../analysis/```
+
+## Structure information
+``` Matlab
+    % Recording parameters
+    rec_param = struct(... 
+        'format',       % File format
+        'start_t',      % Start time
+        'fs',           % Sampling frequency
+        'time_s',       % Recording time to read (s)
+        'conv_f',       % Conversion factor
+        'active_chan',  % List of active channels
+        'nb_chan',      % Number of channels
+    );
+
+    % Sequence information
+    sequence = struct(...
+        'label',        % List of label for sequences
+        'duration_s',   % List of duration for sequences (s)
+        'nb',           % Number of sequences
+    );
+
+    % Stimulation information
+    stim = struct(...
+        'electrodes',   % List of electrodes stimulated
+        'width',        % Width of stimulation (ms)
+        'tstamp',       % Stimulation time stamp for all recording (ms)
+    );
+
+    % Spike detection
+    spike_detection_struct = struct(... 
+        'sequence_label',       % Sequence label
+        'sequence_duration_s',  % Sequence duration (s)
+        'all_spikes',           % All spikes locations
+        'all_pos_spikes',       % All positive spikes locations
+        'all_neg_spikes',       % All negative spikes locations
+        'nb_pos_spikes',        % Number of positive spikes
+        'nb_neg_spikes',        % Number of negative spikes
+        'mean_amp_pos_spikes',  % Mean amplitude of positive spikes
+        'mean_amp_neg_spikes',  % Mean amplitude of negative spikes
+        'all_ISI_secs',         % All ISI (s)
+        'mean_ISI',             % Mean ISI
+        'raster_x',             % Raster plot x axis
+        'raster_y',             % Raster plot y axis
+    );
+
+    % Burst detection
+    burst_detection_struct = struct(... 
+        'sequence_label',       % Sequence label
+        'sequence_duration_s',  % Sequence duration (s)
+        'burst_locs',           % Burst locations (s)
+        'burst_spikes',         % Burst spikes
+        'all_IBI_s',            % All IBI (s)
+        'dev_IBI',              % Deviation IBI
+        'cv_IBI',               % Coefficient of variation IBI
+        'burst_mean_freq',      % Mean frequency bursts (Hz)
+    );
+``` 
 
 ## Documentation
 
