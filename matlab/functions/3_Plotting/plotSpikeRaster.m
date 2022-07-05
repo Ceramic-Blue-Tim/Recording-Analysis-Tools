@@ -140,20 +140,20 @@ p.addParamValue('VertSpikeHeight',1,@(x) isnumeric(x) && isscalar(x));
 p.addParamValue('GenFigure',0, @islogical);
 p.parse(spikes,varargin{:});
 
-spikes = p.Results.spikes;
-figH = p.Results.FigHandle;
-plotType = lower(p.Results.PlotType);
-lineFormat = struct2opt(p.Results.LineFormat);
-markerFormat = struct2opt(p.Results.MarkerFormat);
-autoLabel = p.Results.AutoLabel;
-xLimForCell = p.Results.XLimForCell;
-timePerBin = p.Results.TimePerBin;
-spikeDuration = p.Results.SpikeDuration;
-relSpikeStartTime = p.Results.RelSpikeStartTime;
-rasterWindowOffset = p.Results.RasterWindowOffset;
-vertSpikePosition = p.Results.VertSpikePosition;
-vertSpikeHeight = p.Results.VertSpikeHeight;
-GenFigure = p.Results.GenFigure;
+spikes                  = p.Results.spikes;
+figH                    = p.Results.FigHandle;
+plotType                = lower(p.Results.PlotType);
+lineFormat              = struct2opt(p.Results.LineFormat);
+markerFormat            = struct2opt(p.Results.MarkerFormat);
+autoLabel               = p.Results.AutoLabel;
+xLimForCell             = p.Results.XLimForCell;
+timePerBin              = p.Results.TimePerBin;
+spikeDuration           = p.Results.SpikeDuration;
+relSpikeStartTime       = p.Results.RelSpikeStartTime;
+rasterWindowOffset      = p.Results.RasterWindowOffset;
+vertSpikePosition       = p.Results.VertSpikePosition;
+vertSpikeHeight         = p.Results.VertSpikeHeight;
+GenFigure               = p.Results.GenFigure;
 
 if ~isnan(rasterWindowOffset) && relSpikeStartTime==0
     relSpikeStartTime = rasterWindowOffset;

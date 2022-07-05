@@ -17,7 +17,7 @@
 % > **01 Jun 2022** : add header, comments and update to last version from Tatsuya (RB)
 % > **02 Jun 2022** : add plotting parameters (RB)
 % > **20 Jun 2022** : split time and signal from bin reading to save memory (RB)
-% > **07 Jul 2022** : add check for experiment parameters (RB)
+% > **05 Jul 2022** : add check for experiment parameters, remove plots (RB)
 
 function trace_analysis(f_type, fpath, rec_duration_secs, compute_param, save_param)
 % | **Trace analysis (MED64)**

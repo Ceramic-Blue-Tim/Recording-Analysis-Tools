@@ -1,3 +1,18 @@
+% @title      Burst detection
+% @file       burst_detection.m
+% @author     Tatsuya Osaki, Romain Beaubois
+% @date       06 Jul 2021
+% @copyright
+% SPDX-FileCopyrightText: © 2020 Tatsuya Osaki <osaki@iis.u-tokyo.ac.jp>
+% SPDX-FileCopyrightText: © 2022 Romain Beaubois <refbeaubois@yahoo.com>
+% SPDX-License-Identifier: MIT
+%
+% @brief Burst detection
+% 
+% @details
+% > **19 Jun 2020** : file creation (TO)
+% > **06 Jul 2022** : reorganise output as a structure (RB)
+
 function [burst_detection_struct] = burst_detection(Fs, time_ms, num_electrode, LP_Signal_fix, HP_Signal_fix, All_spikes, bin_win, burst_th, visual_on, sequence_label, sequence_duration_s)
 
     % bin_win= 100;%msec bin_win has to be 100
@@ -43,13 +58,14 @@ function [burst_detection_struct] = burst_detection(Fs, time_ms, num_electrode, 
             hold off
             xlim([0 100000/bin_win])
         else
-            [N,~] = histcounts(All_spikes{i, 1}, bin_window);
-            [burst_spikes, burst_locs] = findpeaks(N,'MinPeakHeight',burst_th );
-            interburst_interval=diff(burst_locs/10);
-            All_interburst_interval_sec{i,1}=interburst_interval;
-            Mean_burst_frequency(i,1)=1/mean(interburst_interval);
-            dev_interburst_interval(i,1)=std(interburst_interval);
-            inter_burst_interval_CV(i,1)=nanstd(interburst_interval)/nanmean(interburst_interval);
+            [N,~]                               = histcounts(All_spikes{i, 1}, bin_window);
+            [burst_spikes, burst_locs]          = findpeaks(N,'MinPeakHeight',burst_th ); 
+            [~, id]                             = lastwarn; warning('off', id);
+            interburst_interval                 = diff(burst_locs/10);
+            All_interburst_interval_sec{i,1}    = interburst_interval;
+            Mean_burst_frequency(i,1)           = 1/mean(interburst_interval);
+            dev_interburst_interval(i,1)        = std(interburst_interval);
+            inter_burst_interval_CV(i,1)        = nanstd(interburst_interval)/nanmean(interburst_interval);
 
             burst_detection_struct = struct(... 
                 'sequence_label',       {sequence_label}, ...

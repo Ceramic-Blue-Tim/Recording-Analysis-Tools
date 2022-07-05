@@ -31,6 +31,8 @@ addpath(genpath('functions'))
     % Splitting sequence
         sequence_label      = ["stim_off1", "stim_on1", "stim_off2", "stim_on2", "stim_off3"]; % Label for each sequence
         sequence_duration_s = [5*60, 5*60, 5*60, 5*60, 5*60]; % Duration of sequences [s]
+        stim_electrodes     = [39, 40, 47, 48, 55, 56, 63, 64]; % Stimulated electrodes
+        stim_width          = 50; % Width of stimulation [ms]
 % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 % Ask files to analyze to user
@@ -66,5 +68,5 @@ end
 for i = 1:nb_f
     % Split files
     [dir_path, exp_name, ~] = fileparts(fpath(i));
-    gen_exp_params(dir_path, exp_name, sequence_label, sequence_duration_s);
+    gen_exp_params(dir_path, exp_name, sequence_label, sequence_duration_s, stim_electrodes, stim_width);
 end
