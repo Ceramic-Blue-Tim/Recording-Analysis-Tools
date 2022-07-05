@@ -1,5 +1,5 @@
-% @title      Plot raster plots of all sequences
-% @file       raster_sequence_no_stim.m
+% @title      Plot raster plots of all sequences with time stamp
+% @file       raster_sequence_stim_stamp.m
 % @author     Romain Beaubois
 % @date       05 Jul 2022
 % @copyright
@@ -7,21 +7,36 @@
 % SPDX-License-Identifier: MIT
 %
 % @brief Plot raster plots of all sequences
+% * add stim offset handling
+% * split tstamp and offset
 % 
 % @details
 % > **05 Jul 2022** : file creation (RB)
 
-function raster_sequence_no_stim(spike_detection_struct, exp_name, rec_param, sequence, stim)
+function raster_sequence_stim_stamp(spike_detection_struct, exp_name, rec_param, sequence, stim)
     % Intermediate variables
     nb_el       = rec_param.nb_chan;  % Number of electrodes
     spikes      = cell(nb_el, 1);
-    
+    tstamp_sid  = stim.tstamp * (rec_param.fs/1e3);
+    t           = 0 : 1e3/rec_param.fs : rec_param.time_s*1e3;
+
     % Set figure
-    fig = figure('Name', "Raster plot of all sequences");
+    fig = figure('Name', "Raster plot of all sequences with stim stamp");
     sgtitle(exp_name);
 
     for i = 1:sequence.nb
         subplot(sequence.nb, 1, i)
+
+        % Time stamp area
+        stim_color  = '#00a9ff'; % https://academo.org/demos/wavelength-to-colour-relationship/
+
+        fig_stim_width = stim.width*1e-3*rec_param.fs;
+        for z = 1:length(tstamp_sid)
+            if tstamp_sid(z) + fig_stim_width < length(t)
+                area([t(tstamp_sid(z)) t(tstamp_sid(z)+fig_stim_width)], [rec_param.nb_chan rec_param.nb_chan], 'FaceColor', stim_color, 'EdgeColor', stim_color)
+            end
+            hold on
+        end
 
         % % Raster plot function
         %     for k = 1:nb_el

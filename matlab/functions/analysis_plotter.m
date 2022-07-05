@@ -70,7 +70,8 @@ fprintf(">>> %s\n", datetime('now'))
     %     );
     % end
 
-    raster_sequence_no_stim(spike_detection_struct, exp_name, rec_param, sequence, stim)
+    raster_sequence_stim_elect(spike_detection_struct, exp_name, rec_param, sequence, stim);
+    raster_sequence_stim_stamp(spike_detection_struct, exp_name, rec_param, sequence, stim);
 
 %% Saving %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Save data 

@@ -28,8 +28,12 @@ function gen_exp_params(dir_path, exp_name, label, duration_s, stim_electrodes, 
     fprintf("[Loading] : Stimulation time stamps experiment %s\n", exp_name);
     [parent_dir_path]   = fileparts(dir_path);
     fpath_stim_tstamp   = fullfile(parent_dir_path, 'stim_tstamp', exp_name+".csv");
-    tstamp              = tstamp2array(fpath_stim_tstamp);
-    stim.tstamp         = tstamp;
+    if isfile(fpath_stim_tstamp)
+        tstamp              = tstamp2array(fpath_stim_tstamp);
+        stim.tstamp         = tstamp;
+    else
+        warning("Stimulation time stamp file not found for experiment %s", exp_name);
+    end
 
 
     % Save information file in the same folder as *.bin file
