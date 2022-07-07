@@ -29,11 +29,21 @@ addpath(genpath('functions'))
         split_list      = ["C1Exp1", "C1Exp2", "C1Exp4", "C1Exp5", "C1Exp6"]; % Experiments to associate with information file
 
     % Splitting sequence
-        sequence_label      = ["stim_off1", "stim_on1", "stim_off2", "stim_on2", "stim_off3"]; % Label for each sequence
-        sequence_duration_s = [5*60, 5*60, 5*60, 5*60, 5*60]; % Duration of sequences [s]
-        stim_electrodes     = [39, 40, 47, 48, 55, 56, 63, 64]; % Stimulated electrodes
-        stim_width          = 50; % Width of stimulation [ms]
+        sequence_label              = ["stim_off1", "stim_on1", "stim_off2", "stim_on2", "stim_off3"]; % Label for each sequence
+        sequence_duration_s         = [5*60, 5*60, 5*60, 5*60, 5*60]; % Duration of sequences [s]
+        electrodes_stim             = [39:8:63 40:8:64]; % Stimulated electrodes
+        electrodes_no_stim_close    = [37:8:61 38:8:62]; % Stimulated electrodes
+        electrodes_no_stim_far      = [33:8:57 34:8:58]; % Stimulated electrodes
+        stim_width                  = 50; % Width of stimulation [ms]
 % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+% Temporary structure
+el_list = struct(...
+    'stim',             electrodes_stim, ...
+    'no_stim_close',    electrodes_no_stim_close, ...
+    'no_stim_far',      electrodes_no_stim_far, ...
+);
 
 % Ask files to analyze to user
 prev_path       = pwd();
@@ -68,5 +78,5 @@ end
 for i = 1:nb_f
     % Split files
     [dir_path, exp_name, ~] = fileparts(fpath(i));
-    gen_exp_params(dir_path, exp_name, sequence_label, sequence_duration_s, stim_electrodes, stim_width);
+    gen_exp_params(dir_path, exp_name, sequence_label, sequence_duration_s, el_list, stim_width);
 end
