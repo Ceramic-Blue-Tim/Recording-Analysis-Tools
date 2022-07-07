@@ -27,8 +27,7 @@ function stim_response(spike_detection_struct, exp_name, rec_param, sequence, st
     tstamp          = stim.tstamp - 5*60*1e3; % (ms) -- <HARDCODED> shift of time stamp according to sequence
     
     pos_label       = ["stimulated", "non-stimulated close", "non-stimulated far"];
-    el_list         =  [stim.electrodes; stim.electrodes_no_stim_close; stim.electrodes_no_stim_far];
-    el_list         =  [stim_elec; non_stim_close; non_stim_far];
+    el_list         = [stim.electrodes; stim.electrodes_no_stim_close; stim.electrodes_no_stim_far];
 
     for pos = 1 : length(pos_label)
         % Create figure
