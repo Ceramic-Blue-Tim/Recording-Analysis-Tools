@@ -12,25 +12,52 @@
 % @details
 % > **05 Jul 2022** : file creation (RB)
 
-function stim_response_1elect(spike_detection_struct, exp_name, rec_param, sequence, stim)
-    % Intermediate variables
-    nb_el       = rec_param.nb_chan;  % Number of electrodes
-    spikes      = cell(nb_el, 1);
-    tstamp_sid  = stim.tstamp * (rec_param.fs/1e3);
+function stim_response_1elect(fpath, spike_detection_struct, exp_name, rec_param, sequence, stim)
+    % Get data of one or several electrodes
+    [t, Signal, ~, ~]       = read_bin(fpath, rec_param.time_s);   % Signals of electrodes + name of file + recording parameters
+    [id_start, id_stop]     = get_seq_id_range(rec_param.fs, sequence, length(t));
+    el_id                   = stim.electrodes(1);
+    el_data_raw             = Signal(:, el_id); clear Signal;
+    el_data                 = highpass(lowpass(el_data_raw - mean(el_data_raw), 3000, rec_param.fs), 300, rec_param.fs);
 
+    tstamp_sid              = stim.tstamp * (rec_param.fs/1e3);
+    fig_stim_width          = stim.width*1e-3*rec_param.fs;
+    
     % Set figure
     fig = figure('Name', "Raster plot of all sequences with stim stamp");
     sgtitle(exp_name);
 
-    for i = 1:sequence.nb
-        subplot(sequence.nb, 1, i)
+    subplot(2, 1, 1)
+    i = 2;
+    % Plot one electrode analog
+    plot(t(id_start(i):id_stop(i))*1e-3-5*60, el_data(id_start(i):id_stop(i)));
+    hold on
 
-        % Plot one electrode analogic
-        
-        % Plot one electrode raster
-        
-        % Plot one stimulation stamp
-
-        title(replace(sequence.label(i), '_', ' '));
+    % Plot spike detection on analog
+    plot(spike_detection_struct(i).all_neg_spikes{el_id,1}, -spike_detection_struct(i).all_neg_spikes{el_id,2}, 'o');
+    hold on
+    plot(spike_detection_struct(i).all_pos_spikes{el_id,1}, spike_detection_struct(i).all_pos_spikes{el_id,2}, 'o');
+    hold on
+    
+    % Plot stim stamp area (add baselibe + generic truncation)
+    subplot(2, 1, 2)
+    for z = 1:length(tstamp_sid)
+        if t(tstamp_sid(z))*1e-3-5*60 < 300
+            if tstamp_sid(z) + fig_stim_width < length(t)
+                area([t(tstamp_sid(z))*1e-3-5*60 t(tstamp_sid(z)+fig_stim_width)*1e-3-5*60], [el_id+1 el_id+1], 'FaceColor', '#00a9ff', 'EdgeColor', '#00a9ff')
+            end
+        end
+        hold on
     end
+
+    % Plot raster
+    x = spike_detection_struct(i).all_spikes{el_id, 1};
+    y = spike_detection_struct(i).all_spikes{el_id, 2};
+
+    plot(x, y, '.k', 'MarkerSize', 1)
+    hold on
+
+    ylim([el_id-1 el_id+1])
+
+    title(replace(sequence.label(i), '_', ' '));
 end

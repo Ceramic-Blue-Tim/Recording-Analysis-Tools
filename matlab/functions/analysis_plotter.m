@@ -73,12 +73,13 @@ fprintf(">>> %s\n", datetime('now'))
     raster_sequence_stim_elect(spike_detection_struct, exp_name, rec_param, sequence, stim);
     % raster_sequence_stim_stamp(spike_detection_struct, exp_name, rec_param, sequence, stim);
     stim_response(spike_detection_struct, exp_name, rec_param, sequence, stim);
+    stim_response_1elect(fpath, spike_detection_struct, exp_name, rec_param, sequence, stim);
 
 
 %% Saving %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % % Save data 
-    % if save_param.data
-    %     fprintf("[Saving] Analysis : %s\n", exp_name);
+    % if save_param.fig
+    %     fprintf("[Saving] Figures : %s\n", exp_name);
 
     %     % Spike detection
     %     if compute_param.spike_detection
