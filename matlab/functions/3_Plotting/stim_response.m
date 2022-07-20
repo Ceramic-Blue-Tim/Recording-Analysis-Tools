@@ -20,7 +20,7 @@ function stim_response(spike_detection_struct, exp_name, rec_param, sequence, st
     win_width_ms    = 5; %(ms)
     win_size_ms     = tpre_stim_ms + tpost_stim_ms + stim.width; % (ms)
 
-    spk_count       = zeros(win_size_ms/win_width_ms, 1);
+    spk_count       = zeros(round(win_size_ms/win_width_ms), 1);
     t_win           = (1 : length(spk_count))*win_width_ms;
 
     s               = 2;    % sequence to check -- <HARDCODED> Sequence to load
