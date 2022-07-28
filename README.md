@@ -6,12 +6,12 @@ Matlab functions to analyze recordings mainly from MEA. Currently supported syst
 <!-- ##### Features ##### -->
 # :mag_right: Features
 
-:heavy_check_mark: Spike detection
-:heavy_check_mark: Burst detection
-:construction: Spike sorting
-:construction: Spike clustering
-:construction: Wavelet
-:construction: Brain wave analysis
+* :heavy_check_mark: Spike detection
+* :heavy_check_mark: Burst detection
+* :construction: Spike sorting
+* :construction: Spike clustering
+* :construction: Wavelet
+* :construction: Brain wave analysis
 
 <!-- ##### Support ##### -->
 # :wrench: Requirements

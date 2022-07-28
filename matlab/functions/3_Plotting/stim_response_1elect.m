@@ -24,43 +24,7 @@ function stim_response_1elect(fpath, spike_detection_struct, exp_name, rec_param
     fig_stim_width          = stim.width*1e-3*rec_param.fs;
     offset                  = 0;
     
-    % % Set figure
-    % fig = figure('Name', "Raster plot of all sequences with stim stamp");
-    % sgtitle(exp_name);
-
-    % subplot(2, 1, 1)
-    % i = 2;
-    % % Plot one electrode analog
-    % plot(t(id_start(i):id_stop(i))*1e-3-5*60, el_data(id_start(i):id_stop(i)));
-    % hold on
-
-    % % Plot spike detection on analog
-    % plot(spike_detection_struct(i).all_neg_spikes{el_id,1}, -spike_detection_struct(i).all_neg_spikes{el_id,2}, 'o');
-    % hold on
-    % plot(spike_detection_struct(i).all_pos_spikes{el_id,1}, spike_detection_struct(i).all_pos_spikes{el_id,2}, 'o');
-    % hold on
-    
-    % % Plot stim stamp area (add baselibe + generic truncation)
-    % subplot(2, 1, 2)
-    % for z = 1:length(tstamp_sid)
-    %     if t(tstamp_sid(z))*1e-3-5*60 < 300
-    %         if tstamp_sid(z) + fig_stim_width < length(t)
-    %             area([t(tstamp_sid(z))*1e-3-5*60 t(tstamp_sid(z)+fig_stim_width)*1e-3-5*60], [el_id+1 el_id+1], 'FaceColor', '#00a9ff', 'EdgeColor', '#00a9ff')
-    %         end
-    %     end
-    %     hold on
-    % end
-
-    % % Plot raster
-    % x = spike_detection_struct(i).all_spikes{el_id, 1};
-    % y = spike_detection_struct(i).all_spikes{el_id, 2};
-
-    % plot(x, y, '.k', 'MarkerSize', 1)
-    % hold on
-
-    % ylim([el_id-1 el_id+1])
-
-    % title(replace(sequence.label(i), '_', ' '));
+    show_time               = 10; % Time to show (s)
 
     % For all sequences
     for s = 1:sequence.nb
@@ -71,7 +35,7 @@ function stim_response_1elect(fpath, spike_detection_struct, exp_name, rec_param
 
             % Set figure
             fig = figure('Name', "Raster plot of all sequences with stim stamp",'NumberTitle','off');
-            sgtitle(exp_name + "-" + seq_name);
+            sgtitle(exp_name + " - " + seq_name);
 
             for i = 1:length(stim.tstamp)
                 if stim.tstamp(i) > (offset*1e3) && stim.tstamp(i) < (offset*1e3 + sequence.duration_s(s)*1e3)
@@ -79,10 +43,24 @@ function stim_response_1elect(fpath, spike_detection_struct, exp_name, rec_param
                 end
             end
             padded_tstamp   = [tstamp/1e3 ; zeros(length(t)-length(tstamp),1)];
-            stim_state      = 0.1*min(el_data(id_start(s):id_stop(s))) + min(el_data(id_start(s):id_stop(s))) * double((padded_tstamp>0));
+
+            min_line        = min(el_data(id_start(s):id_stop(s))) + 0.1*min(el_data(id_start(s):id_stop(s)));
+            max_line        = max(el_data(id_start(s):id_stop(s))) + 0.1*max(el_data(id_start(s):id_stop(s)));
+            stim_state      = min_line * double((padded_tstamp>0));
+
+            % Plot stim stamp area (add baseline + generic truncation)
+            for z = 1:length(tstamp_sid)
+                if t(tstamp_sid(z))*1e-3-offset < sequence.duration_s(s)
+                    if tstamp_sid(z) + fig_stim_width < length(t)
+                        % area([[t(tstamp_sid(z))*1e-3-offset t(tstamp_sid(z)+fig_stim_width)*1e-3-offset], [max_line+1 max_line+1]], min_line, 'FaceColor', '#00a9ff', 'EdgeColor', '#00a9ff');
+                        area([t(tstamp_sid(z))*1e-3-offset, t(tstamp_sid(z)+fig_stim_width)*1e-3-offset], [max_line+1;max_line+1], min_line, 'FaceColor', '#00a9ff', 'EdgeColor', '#00a9ff');
+                        hold on
+                    end
+                end
+            end
 
             % Plot one electrode analog
-            plot(t(id_start(s):id_stop(s))*1e-3-offset, el_data(id_start(s):id_stop(s)));
+            plot(t(id_start(s):id_stop(s))*1e-3-offset, el_data(id_start(s):id_stop(s)), 'k');
             hold on
 
             % Plot spike detection on analog
@@ -91,28 +69,20 @@ function stim_response_1elect(fpath, spike_detection_struct, exp_name, rec_param
             plot(spike_detection_struct(s).all_pos_spikes{el_id,1}, spike_detection_struct(s).all_pos_spikes{el_id,2}, 'o');
             hold on
 
-            scatter(padded_tstamp, stim_state, 3, 'filled')
-            hold on
-            
-            % % Plot stim stamp area (add baseline + generic truncation)
-            % subplot(2, 1, 2)
-            % for z = 1:length(tstamp_sid)
-            %     if t(tstamp_sid(z))*1e-3-5*60 < 300
-            %         if tstamp_sid(z) + fig_stim_width < length(t)
-            %             area([t(tstamp_sid(z))*1e-3-5*60 t(tstamp_sid(z)+fig_stim_width)*1e-3-5*60], [el_id+1 el_id+1], 'FaceColor', '#00a9ff', 'EdgeColor', '#00a9ff')
-            %         end
-            %     end
-            %     hold on
-            % end
-
-            % % Plot raster
-            % x = spike_detection_struct(s).all_spikes{el_id, 1};
-            % y = spike_detection_struct(s).all_spikes{el_id, 2};
-
-            % plot(x, y, '.k', 'MarkerSize', 1)
+            % Dots of stimulation trigger
+            % scatter(padded_tstamp, stim_state, 3, 'filled')
             % hold on
 
-            % ylim([el_id-1 el_id+1])
+            % Plot spike detection
+            x = spike_detection_struct(s).all_spikes{el_id, 1};
+            y = spike_detection_struct(s).all_spikes{el_id, 2};
+            y = y*0 + min_line + 0.1*min_line;
+
+            plot(x, y, '.k', 'MarkerSize', 5)
+            hold on
+            
+            xlim([0 show_time])
+            ylim([min_line+0.2*min_line max_line+0.1*max_line])
         end
         
         offset = offset + sequence.duration_s(s);
