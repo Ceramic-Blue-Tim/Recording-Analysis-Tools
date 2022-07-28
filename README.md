@@ -1,26 +1,44 @@
 <!-- ##### Overview ##### -->
 # Overview
 
-Matlab functions to analyze recordings mainly from MEA
+Matlab functions to analyze recordings mainly from MEA. Currently supported system are **MED64** and **MCS**.
 
 <!-- ##### Features ##### -->
-# Features
+# :mag_right: Features
 
-* Spike detection
-* Burst detection
-* Spike sorting
-* Spike clustering
-* Wavelet
-* Brain wave analysis
+:heavy_check_mark: Spike detection
+:heavy_check_mark: Burst detection
+:construction: Spike sorting
+:construction: Spike clustering
+:construction: Wavelet
+:construction: Brain wave analysis
 
 <!-- ##### Support ##### -->
-# Support
+# :wrench: Requirements
 
 ## Software
+
 * Matlab 2014.b and older
 
+## Data format
+
+* **MED64**
+  * .bin
+  * .mat
+* **MCS**
+  * .raw
+  * .mat
+
 <!-- ##### Getting started ##### -->
-# Getting started
+# :beginner: Getting started
+
+## :open_file_folder: Script index
+
+* ```MED64_rec_sequencer.m``` : generate experiment information file about recording
+* ```MED64_rec_analysis.m``` : perform analysis of recording
+* ```MED64_rec_plotter.m``` : plot figures from analysis
+* ```MED64_rec_viewer.m``` : view recording
+* ```MED64_rec_splitter.m``` : split recording for smaller RAM usage when loading
 
 ## Generate experiment information file for recordings
 
