@@ -21,7 +21,7 @@ function raster_sequence_stim_stamp(spike_detection_struct, exp_name, rec_param,
     t           = 0 : 1e3/rec_param.fs : rec_param.time_s*1e3;
 
     % Set figure
-    fig = figure('Name', "Raster plot of all sequences with stim stamp");
+    fig = figure('Name', "Raster plot of all sequences with stim stamp", 'NumberTitle','off');
     sgtitle(exp_name);
 
     for i = 1:sequence.nb

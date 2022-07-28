@@ -17,7 +17,7 @@ function raster_sequence_stim_elect(spike_detection_struct, exp_name, rec_param,
     spikes      = cell(nb_el, 1);
     
     % Set figure
-    fig = figure('Name', "Raster plot of all sequences");
+    fig = figure('Name', "Raster plot of all sequences", 'NumberTitle','off');
     sgtitle(exp_name);
 
     for i = 1:sequence.nb
